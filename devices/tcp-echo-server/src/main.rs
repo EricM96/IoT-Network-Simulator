@@ -6,7 +6,8 @@ fn handle_connection(mut stream: TcpStream) {
 
     let n = stream.read(&mut buffer);
     match n {
-        Ok(_) => {
+        Ok(msg_len) => {
+            println!("Message received: {:?}", String::from_utf8_lossy(&buffer[..msg_len]));
             stream.write("pong".as_bytes()).unwrap();
             stream.flush().unwrap();
         }
@@ -15,8 +16,9 @@ fn handle_connection(mut stream: TcpStream) {
 }
 
 fn main() -> std::io::Result<()> {
-    let listener = TcpListener::bind("127.0.0.1:8080")?;
+    let listener = TcpListener::bind("0.0.0.0:8080")?;
 
+    println!("Listening for incoming connections");
     for stream in listener.incoming() {
         handle_connection(stream?);
     }
