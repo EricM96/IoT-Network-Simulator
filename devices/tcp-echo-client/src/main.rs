@@ -7,7 +7,7 @@ fn main() {
     loop {
         let mut buffer = [0; 128];
         std::thread::sleep(pause);
-        let mut stream = TcpStream::connect("echo-server:8080").unwrap();
+        let mut stream = TcpStream::connect("router:8080").unwrap();
         stream.write("ping".as_bytes()).unwrap();
 
         let n = stream.read(&mut buffer);
