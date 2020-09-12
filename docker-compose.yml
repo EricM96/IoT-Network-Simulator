@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  echo-server:
+    build: ./devices/tcp-echo-server
+    command: tcp-echo-server
+    expose:
+      - "8080"
+    networks:
+      - iot
+
+  echo-client:
+    build: ./devices/tcp-echo-client
+    command: tcp-echo-client
+    networks:
+      - iot
+
+networks:
+  iot:
+
