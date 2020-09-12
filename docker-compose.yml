@@ -1,6 +1,14 @@
 version: "3"
 
 services:
+  router:
+    build: ./router
+    command: router
+    expose:
+      - "8080"
+    networks:
+      - iot
+
   echo-server:
     build: ./devices/tcp-echo-server
     command: tcp-echo-server
