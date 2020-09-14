@@ -7,6 +7,7 @@ fn handle_connection(mut stream: TcpStream) {
     let n = stream.read(&mut buffer);
     match n {
         Ok(msg_len) => {
+            let mut stream = TcpStream::connect("router:8080").unwrap();
             println!("Message received: {:?}", String::from_utf8_lossy(&buffer[..msg_len]));
             stream.write("pong".as_bytes()).unwrap();
             stream.flush().unwrap();
