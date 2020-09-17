@@ -4,10 +4,13 @@ services:
   router:
     build: ./router
     command: router
+    cap_add:
+      - NET_ADMIN
     expose:
       - "8080"
     networks:
       - iot
+    user: root
 
   echo-server:
     build: ./devices/tcp-echo-server
