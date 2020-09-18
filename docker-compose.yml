@@ -21,6 +21,9 @@ services:
     environment:
       ECHO_SERVER: 172.18.0.3
       ECHO_CLIENT: 172.18.0.4
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   echo-server:
     build: ./devices/tcp-echo-server
@@ -32,6 +35,9 @@ services:
     networks:
       iot:
         ipv4_address: 172.18.0.3
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   echo-client:
     build: ./devices/tcp-echo-client
@@ -41,4 +47,7 @@ services:
     networks:
       iot:
         ipv4_address: 172.18.0.4
+    deploy:
+      restart_policy:
+        condition: on-failure
 
