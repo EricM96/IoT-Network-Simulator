@@ -1,28 +1,53 @@
 version: "3"
 
+networks:
+  iot:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
+
 services:
   router:
     build: ./router
     command: router
-    expose:
-      - "8080"
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "8080:8080"
     networks:
-      - iot
+      iot:
+        ipv4_address: 172.18.0.2
+    environment:
+      ECHO_SERVER: 172.18.0.3
+      ECHO_CLIENT: 172.18.0.4
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   echo-server:
     build: ./devices/tcp-echo-server
     command: tcp-echo-server
+    cap_add:
+      - NET_ADMIN
     expose:
       - "8080"
     networks:
-      - iot
+      iot:
+        ipv4_address: 172.18.0.3
+    deploy:
+      restart_policy:
+        condition: on-failure
 
   echo-client:
     build: ./devices/tcp-echo-client
     command: tcp-echo-client
+    cap_add:
+      - NET_ADMIN
     networks:
-      - iot
-
-networks:
-  iot:
+      iot:
+        ipv4_address: 172.18.0.4
+    deploy:
+      restart_policy:
+        condition: on-failure
 
