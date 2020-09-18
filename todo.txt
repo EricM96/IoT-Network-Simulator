@@ -1,1 +1,1 @@
-- Add static IPs and export them as environment variables to router
+- Add rules to count IP forwarding

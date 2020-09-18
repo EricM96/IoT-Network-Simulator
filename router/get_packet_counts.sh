@@ -1,11 +1,11 @@
 #!/bin/bash
-iptables -Z echo_client_tcp_in
-iptables -Z echo_client_tcp_out
-period=15
-sleep "$period"
+client_packets_in=$(iptables -nvL echo_client_tcp | awk 'FNR == 3 {print $1; exit}')
+client_packets_out=$(iptables -nvL echo_client_tcp | awk 'FNR == 4 {print $1; exit}')
+server_packets_in=$(iptables -nvL echo_server_tcp | awk 'FNR == 3 {print $1; exit}')
+server_packets_out=$(iptables -nvL echo_server_tcp | awk 'FNR == 4 {print $1; exit}')
 
-packets_in=$(iptables -nvL echo_client_tcp_in | awk '/all/{print $1}')
-packets_out=$(iptables -nvL echo_client_tcp_out | awk '/all/{print $1}')
+echo "From client: ($client_packets_in, $client_packets_out)"
+echo "From server: ($server_packets_in, $server_packets_out)"
 
-echo "During the last $period seconds we saw $packets_in incoming packets and $packets_out outgoing packets"
-
+iptables -Z echo_client_tcp
+iptables -Z echo_server_tcp
