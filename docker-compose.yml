@@ -13,8 +13,8 @@ services:
     command: router
     cap_add:
       - NET_ADMIN
-    expose:
-      - "8080"
+    ports:
+      - "8080:8080"
     networks:
       iot:
         ipv4_address: 172.18.0.2
