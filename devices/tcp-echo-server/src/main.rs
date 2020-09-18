@@ -1,5 +1,6 @@
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
+use std::process::Command;
 
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 128];
@@ -7,7 +8,6 @@ fn handle_connection(mut stream: TcpStream) {
     let n = stream.read(&mut buffer);
     match n {
         Ok(msg_len) => {
-            let mut stream = TcpStream::connect("router:8080").unwrap();
             println!("Message received: {:?}", String::from_utf8_lossy(&buffer[..msg_len]));
             stream.write("pong".as_bytes()).unwrap();
             stream.flush().unwrap();
@@ -17,6 +17,11 @@ fn handle_connection(mut stream: TcpStream) {
 }
 
 fn main() -> std::io::Result<()> {
+    Command::new("ip")
+            .args(&["route", "add", "172.18.0.3", "via", "172.18.0.2", "dev", "eth0"])
+            .output()
+            .expect("Failed to add route");
+
     let listener = TcpListener::bind("0.0.0.0:8080")?;
 
     println!("Listening for incoming connections");

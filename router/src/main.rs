@@ -2,6 +2,7 @@ use dns_lookup::lookup_addr;
 use std::collections::HashMap;
 use std::io::prelude::*;
 use std::net::{IpAddr, TcpListener, TcpStream};
+use std::process::Command;
 
 fn handle_connection(
     mut stream: TcpStream,
@@ -67,6 +68,13 @@ fn handle_connection(
 }
 
 fn main() -> std::io::Result<()> {
+    let cmd_handle = Command::new("./set_packet_counts.sh")
+                         .output()
+                         .expect("Failed to run command");
+
+    let output = cmd_handle.stdout;
+    println!("{}", String::from_utf8_lossy(&output));
+
     let mut addr_book: HashMap<IpAddr, String> = HashMap::new();
     let mut routing_table: HashMap<String, String> = HashMap::new();
 

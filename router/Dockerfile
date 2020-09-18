@@ -13,4 +13,4 @@ RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
 
 RUN cargo install --path .
 
-CMD ["router"]
+CMD ["./set_packet_counts.sh && router"]
