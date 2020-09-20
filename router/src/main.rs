@@ -6,11 +6,21 @@ extern crate rocket;
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use std::process::Command;
-use std::thread::sleep;
-use std::time::Duration;
 
 #[derive(Serialize)]
-struct HostTraffic(u16, u16);
+struct HostTraffic {
+    incoming: u32,
+    outgoing: u32,
+}
+
+impl HostTraffic {
+    fn new(incoming: u32, outgoing: u32) -> HostTraffic {
+        HostTraffic {
+            incoming: incoming,
+            outgoing: outgoing,
+        }
+    }
+}
 
 #[derive(Serialize)]
 struct TrafficWindow {
@@ -28,14 +38,14 @@ fn index() -> Json<TrafficWindow> {
     let output: String = String::from_utf8_lossy(&output).to_string();
     let mut parts = output
         .split_whitespace()
-        .map(|output| output.parse::<u16>());
+        .map(|output| output.parse::<u32>());
 
     let window = TrafficWindow {
-        echo_client: HostTraffic(
+        echo_client: HostTraffic::new(
             parts.next().unwrap().unwrap(),
             parts.next().unwrap().unwrap(),
         ),
-        echo_server: HostTraffic(
+        echo_server: HostTraffic::new(
             parts.next().unwrap().unwrap(),
             parts.next().unwrap().unwrap(),
         ),
