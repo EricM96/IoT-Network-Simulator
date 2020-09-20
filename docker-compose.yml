@@ -27,7 +27,7 @@ services:
 
   echo-server:
     build: ./devices/tcp-echo-server
-    command: tcp-echo-server
+    command: tcp-echo-server 172.18.0.2 172.18.0.4
     cap_add:
       - NET_ADMIN
     expose:

@@ -1,48 +1,56 @@
+use device_types::{Device, Subscriber};
+use std::env;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::process::Command;
 
-fn handle_connection(mut stream: TcpStream) {
-    let mut buffer = [0; 128];
+#[derive(Default)]
+struct TcpEchoServer {
+    port: String,
+}
 
-    let n = stream.read(&mut buffer);
-    match n {
-        Ok(msg_len) => {
-            println!(
-                "Message received: {:?}",
-                String::from_utf8_lossy(&buffer[..msg_len])
-            );
-            stream.write("pong".as_bytes()).unwrap();
-            stream.flush().unwrap();
+impl Device for TcpEchoServer {}
+impl Subscriber for TcpEchoServer {
+    fn loop_callback(&self, mut stream: TcpStream) {
+        let mut buffer = [0; 128];
+
+        let n = stream.read(&mut buffer);
+        match n {
+            Ok(msg_len) => {
+                println!(
+                    "Message received: {:?}",
+                    String::from_utf8_lossy(&buffer[..msg_len])
+                );
+                stream.write("pong".as_bytes()).unwrap();
+                stream.flush().unwrap();
+            }
+            Err(error) => println!("Error encountered: {}", error),
+        };
+    }
+
+    fn main_loop(&self) {
+        let listener = TcpListener::bind("0.0.0.0:".to_string() + &self.port)
+            .expect("Failed to establish socket");
+
+        for stream in listener.incoming() {
+            self.loop_callback(stream.unwrap());
         }
-        Err(error) => println!("Error encountered: {}", error),
-    };
+    }
+}
+
+impl TcpEchoServer {
+    pub fn new(port: String) -> TcpEchoServer {
+        TcpEchoServer {
+            port: port.to_string(),
+        }
+    }
 }
 
 fn main() -> std::io::Result<()> {
-    // Add route to publisher
-    Command::new("ip")
-        .args(&[
-            "route",
-            "add",
-            "172.18.0.3",
-            "via",
-            "172.18.0.2",
-            "dev",
-            "eth0",
-        ])
-        .output()
-        .expect("Failed to add route");
+    let args: Vec<String> = env::args().collect();
 
-    // Add subscriber endpoint
-    let listener = TcpListener::bind("0.0.0.0:8080")?;
+    TcpEchoServer::new("8080".to_string())
+        .set_routes(args[1..].to_vec())
+        .main_loop();
 
-    // Subscriber loop
-    println!("Listening for incoming connections");
-    for stream in listener.incoming() {
-        // Register handler
-        handle_connection(stream?);
-    }
     Ok(())
 }
-
