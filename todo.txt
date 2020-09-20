@@ -1,1 +1,15 @@
-- Add rules to count IP forwarding
+- add additional devices
+    * weather sensors
+    * smart fridge
+    * lights
+    * motion sensor
+    * Garage door
+    * Thermostat
+    * Smart home controller
+
+- add data aggregation module
+    * Capture mode, write data to database
+    * Live mode, create heatmap and send it to analytics module
+
+- add analytics module
+
