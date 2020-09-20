@@ -41,7 +41,7 @@ services:
 
   echo-client:
     build: ./devices/tcp-echo-client
-    command: tcp-echo-client
+    command: tcp-echo-client 172.18.0.2 172.18.0.3
     cap_add:
       - NET_ADMIN
     networks:

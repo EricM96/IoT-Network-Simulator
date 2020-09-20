@@ -20,6 +20,7 @@ fn handle_connection(mut stream: TcpStream) {
 }
 
 fn main() -> std::io::Result<()> {
+    // Add route to publisher
     Command::new("ip")
         .args(&[
             "route",
@@ -33,10 +34,13 @@ fn main() -> std::io::Result<()> {
         .output()
         .expect("Failed to add route");
 
+    // Add subscriber endpoint
     let listener = TcpListener::bind("0.0.0.0:8080")?;
 
+    // Subscriber loop
     println!("Listening for incoming connections");
     for stream in listener.incoming() {
+        // Register handler
         handle_connection(stream?);
     }
     Ok(())
