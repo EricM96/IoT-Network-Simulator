@@ -1,0 +1,11 @@
+[package]
+name = "smart_home_controller"
+version = "0.1.0"
+authors = ["Eric McCullough <eric96@live.missouristate.edu>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+device_types = { version = "0.1.0", path = "./device_types" }
+
