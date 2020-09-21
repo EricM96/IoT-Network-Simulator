@@ -2,7 +2,7 @@ use std::process::Command;
 use std::net::TcpStream;
 
 pub trait Device {
-    fn set_routes(&self, hosts: Vec<String>) -> &Self {
+    fn set_routes(&self, hosts: Vec<String>) {
         let router = &hosts[0];
 
         for peer in hosts[1..].iter() {
@@ -11,18 +11,17 @@ pub trait Device {
                 .output()
                 .expect("Failed to add route");
         }
-        self
     }
 }
 
 pub trait Publisher: Device {
-    fn main_loop(&self) {
+    fn main_loop(&mut self) {
         loop {
             self.loop_callback();
         }
     }
 
-    fn loop_callback(&self);
+    fn loop_callback(&mut self);
 }
 
 pub trait Subscriber: Device {

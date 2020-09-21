@@ -56,7 +56,7 @@ struct SmcClient {
 
 impl Device for SmcClient {}
 impl Publisher for SmcClient {
-    fn loop_callback(&self) {
+    fn loop_callback(&mut self) {
         let mut buffer = [0; 128];
 
         let pause = std::time::Duration::new(5, 0);
@@ -92,9 +92,9 @@ fn main() -> std::io::Result<()> {
     });
 
     // Start subscriber loops with set routes
-    SmcServer::new("8080".to_string())
-        .set_routes(args[1..].to_vec())
-        .main_loop();
+    let smc = SmcServer::new("8080".to_string());
+    smc.set_routes(args[1..].to_vec());
+    smc.main_loop();
 
     Ok(())
 }

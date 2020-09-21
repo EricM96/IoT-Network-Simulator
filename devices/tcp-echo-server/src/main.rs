@@ -48,9 +48,9 @@ impl TcpEchoServer {
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
-    TcpEchoServer::new("8080".to_string())
-        .set_routes(args[1..].to_vec())
-        .main_loop();
+    let server = TcpEchoServer::new("8080".to_string());
+    server.set_routes(args[1..].to_vec());
+    server.main_loop();
 
     Ok(())
 }

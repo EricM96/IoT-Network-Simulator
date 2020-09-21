@@ -12,7 +12,7 @@ struct TcpEchoClient {
 
 impl Device for TcpEchoClient {}
 impl Publisher for TcpEchoClient {
-    fn loop_callback(&self) {
+    fn loop_callback(&mut self) {
         let mut buffer = [0; 128];
 
             let pause = std::time::Duration::new(5, 0);
@@ -36,9 +36,9 @@ impl TcpEchoClient {
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
 
-    TcpEchoClient::new("echo-server:8080".to_string())
-        .set_routes(args[1..].to_vec())
-        .main_loop();
+    let mut host = TcpEchoClient::new("echo-server:8080".to_string());
+    host.set_routes(args[1..].to_vec());
+    host.main_loop();
 
     Ok(())
 }
