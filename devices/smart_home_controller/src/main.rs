@@ -1,4 +1,5 @@
 use device_types::{Device, Publisher, Subscriber};
+use rand::{self, Rng};
 use std::env;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
@@ -49,8 +50,19 @@ impl SmcServer {
 
 //========================== Publisher Component ==================================================
 #[derive(Default)]
+/// A weather sensor that sends randomly generated temperature and humidity information to the
+/// smart home controller at a set interval.
 struct SmcClient {
+    // Peer to publish data to
     peer: String,
+    // Temperature generation
+    tmp_min: u8,
+    tmp_max: u8,
+    tmp_rng: rand::rngs::ThreadRng,
+    // Generate random pauses between publications
+    pause_min: u64,
+    pause_max: u64,
+    pause_rng: rand::rngs::ThreadRng,
 }
 
 impl Device for SmcClient {}
@@ -58,10 +70,14 @@ impl Publisher for SmcClient {
     fn loop_callback(&mut self) {
         let mut buffer = [0; 128];
 
-        let pause = std::time::Duration::new(5, 0);
-        thread::sleep(pause);
+        let msg: String = format!(
+            r#"{{"newTmp": {}}}"#,
+            self.rand_tmp(),
+        );
+
+        thread::sleep(self.rand_pause());
         let mut stream = TcpStream::connect(&self.peer).unwrap();
-        stream.write("ping".as_bytes()).unwrap();
+        stream.write(msg.as_bytes()).unwrap();
         let n = stream.read(&mut buffer).unwrap();
         println!(
             "Message received: {:?}",
@@ -71,10 +87,31 @@ impl Publisher for SmcClient {
 }
 
 impl SmcClient {
-    pub fn new(peer: String) -> SmcClient {
+    pub fn new(
+        peer: String,
+        tmp_min: u8,
+        tmp_max: u8,
+        pause_min: u64,
+        pause_max: u64,
+    ) -> SmcClient {
         SmcClient {
             peer: peer.to_string(),
+            tmp_min: tmp_min,
+            tmp_max: tmp_max,
+            pause_min: pause_min,
+            pause_max: pause_max,
+            tmp_rng: rand::thread_rng(),
+            pause_rng: rand::thread_rng(),
         }
+    }
+
+    fn rand_tmp(&mut self) -> u8 {
+        self.tmp_rng.gen_range(self.tmp_min, self.tmp_max)
+    }
+
+    fn rand_pause(&mut self) -> Duration {
+        let secs: u64 = self.pause_rng.gen_range(self.pause_min, self.pause_max);
+        Duration::new(secs, 0)
     }
 }
 
@@ -84,12 +121,11 @@ fn main() -> std::io::Result<()> {
 
     // Start publisher loop. There's no need to set the routes here since they are set by the
     // subscriber component
-    // thread::spawn(|| {
-    //     let pause = std::time::Duration::new(15, 0);
-    //     let pause = Duration::new(2, 0);
-    //     thread::sleep(pause);
-    //     SmcClient::new("host:port".to_string()).main_loop();
-    // });
+    thread::spawn(|| {
+        let pause = Duration::new(2, 0);
+        thread::sleep(pause);
+        SmcClient::new("thermostat:8080".to_string(), 68, 72, 5, 15).main_loop();
+    });
 
     // Start subscriber loops with set routes
     let smc = SmcServer::new("8080".to_string());

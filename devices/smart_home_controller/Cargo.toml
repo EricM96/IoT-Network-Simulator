@@ -8,4 +8,5 @@ edition = "2018"
 
 [dependencies]
 device_types = { version = "0.1.0", path = "./device_types" }
+rand = "0.7.3"
 
