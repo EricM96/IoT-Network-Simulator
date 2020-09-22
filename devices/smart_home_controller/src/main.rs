@@ -24,7 +24,6 @@ impl Subscriber for SmcServer {
                     String::from_utf8_lossy(&buffer[..msg_len])
                 );
                 stream.write("Ok".as_bytes()).unwrap();
-                stream.flush().unwrap();
             }
             Err(error) => println!("Error encountered: {}", error),
         };
@@ -85,11 +84,12 @@ fn main() -> std::io::Result<()> {
 
     // Start publisher loop. There's no need to set the routes here since they are set by the
     // subscriber component
-    thread::spawn(|| {
-        let pause = Duration::new(2, 0);
-        thread::sleep(pause);
-        SmcClient::new("host:port".to_string()).main_loop();
-    });
+    // thread::spawn(|| {
+    //     let pause = std::time::Duration::new(15, 0);
+    //     let pause = Duration::new(2, 0);
+    //     thread::sleep(pause);
+    //     SmcClient::new("host:port".to_string()).main_loop();
+    // });
 
     // Start subscriber loops with set routes
     let smc = SmcServer::new("8080".to_string());

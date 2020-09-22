@@ -1,5 +1,5 @@
 use device_types::{Device, Publisher};
-use rand::Rng;
+use rand::{self, Rng};
 use std::env;
 use std::io::prelude::*;
 use std::net::TcpStream;
@@ -35,7 +35,7 @@ impl Publisher for WeatherSensor {
         let mut buffer = [0; 128];
 
         let msg: String = format!(
-            "{{\"tmp\": {}, \"hmd\": {:.2}}}",
+            r#"{{"tmp": {}, "hmd": {:.2}}}"#,
             self.rand_tmp(),
             self.rand_hmd()
         );
@@ -93,3 +93,4 @@ fn main() -> std::io::Result<()> {
 
     Ok(())
 }
+
