@@ -1,11 +1,11 @@
 - add additional devices
-    * weather sensors (Publisher -> therm, smc)
-    * smart fridge (Publisher -> smc)
+    x weather sensors (Publisher -> therm, smc)
     * lights (Subscriber <- motion sensor)
     * motion sensor (Publisher -> lights)
     * Garage door (Subscriber <- smc)
-    * Thermostat (Subscriber <- weather, smc)
-    * Smart home controller (Subsriber/ <- ws, smart fridge,
+    * smart fridge (Publisher -> smc)
+    x Thermostat (Subscriber <- weather, smc)
+    x Smart home controller (Subsriber/ <- ws, smart fridge,
                              Publisher -> garage door, therm)
 
 - add data aggregation module
