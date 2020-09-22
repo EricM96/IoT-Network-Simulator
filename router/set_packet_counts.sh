@@ -18,6 +18,10 @@ iptables -N weather_sensor
 iptables -A weather_sensor -s $WEATHER_SENSOR
 iptables -A weather_sensor -d $WEATHER_SENSOR
 
+iptables -N thermostat
+iptables -A thermostat -s $THERMOSTAT
+iptables -A thermostat -d $THERMOSTAT
+
 iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE
 # iptables -A FORWARD -s $ECHO_CLIENT -j echo_client_tcp
 # iptables -A FORWARD -d $ECHO_CLIENT -j echo_client_tcp
@@ -30,4 +34,7 @@ iptables -A FORWARD -d $SH_CONTROLLER -p tcp -j smart_home_controller
 
 iptables -A FORWARD -s $WEATHER_SENSOR -p tcp -j weather_sensor
 iptables -A FORWARD -d $WEATHER_SENSOR -p tcp -j weather_sensor
+
+iptables -A FORWARD -s $THERMOSTAT -p tcp -j thermostat
+iptables -A FORWARD -d $THERMOSTAT -p tcp -j thermostat
 
