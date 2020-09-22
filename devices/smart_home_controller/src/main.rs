@@ -119,17 +119,17 @@ impl SmcClient {
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
-    // Start publisher loop. There's no need to set the routes here since they are set by the
-    // subscriber component
-    thread::spawn(|| {
-        let pause = Duration::new(2, 0);
-        thread::sleep(pause);
-        SmcClient::new("thermostat:8080".to_string(), 68, 72, 5, 15).main_loop();
-    });
-
     // Start subscriber loops with set routes
     let smc = SmcServer::new("8080".to_string());
     smc.set_routes(args[1..].to_vec());
+
+    // Start publisher loop. There's no need to set the routes here since they are set by the
+    // subscriber component
+    thread::spawn(|| {
+        let mut smc_pub = SmcClient::new("thermostat:8080".to_string(), 68, 72, 5, 15);
+        smc_pub.main_loop();
+    });
+
     smc.main_loop();
 
     Ok(())

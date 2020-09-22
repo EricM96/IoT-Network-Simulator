@@ -30,7 +30,7 @@ services:
 
   smart_home_controller:
     build: ./devices/smart_home_controller
-    command: smart_home_controller 172.18.0.2 172.18.0.6
+    command: smart_home_controller 172.18.0.2 172.18.0.6 172.18.0.7
     cap_add:
       - NET_ADMIN
     expose:
