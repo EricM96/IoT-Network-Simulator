@@ -12,7 +12,7 @@ use std::time::Duration;
 /// smart home controller at a set interval.
 struct WeatherSensor {
     /// Smart home controller address. Can be given as <hostname>:<port>.
-    peer: String,
+    peers: Vec<String>,
     /// Minimum temperature
     tmp_min: u8,
     /// Maximum temperature
@@ -41,19 +41,21 @@ impl Publisher for WeatherSensor {
         );
 
         thread::sleep(self.pause);
-        let mut stream = TcpStream::connect(&self.peer).unwrap();
-        stream.write(msg.as_bytes()).unwrap();
-        let n = stream.read(&mut buffer).unwrap();
-        println!(
-            "Message received: {:?}",
-            String::from_utf8_lossy(&buffer[..n])
-        );
+        for peer in self.peers.iter() {
+            let mut stream = TcpStream::connect(peer).unwrap();
+            stream.write(msg.as_bytes()).unwrap();
+            let n = stream.read(&mut buffer).unwrap();
+            println!(
+                "Message received: {:?}",
+                String::from_utf8_lossy(&buffer[..n])
+            );
+        }
     }
 }
 
 impl WeatherSensor {
     pub fn new(
-        peer: String,
+        peers: Vec<String>,
         tmp_min: u8,
         tmp_max: u8,
         hmd_min: f32,
@@ -61,7 +63,7 @@ impl WeatherSensor {
         pause: u64,
     ) -> WeatherSensor {
         WeatherSensor {
-            peer: peer.to_string(),
+            peers: peers,
             tmp_min: tmp_min,
             tmp_max: tmp_max,
             hmd_min: hmd_min,
@@ -86,11 +88,20 @@ fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
     // Start publisher loops with set routes
-    let mut weather_sensor =
-        WeatherSensor::new("smart_home_controller:8080".to_string(), 46, 75, 0.53, 0.85, 5);
+    let mut weather_sensor = WeatherSensor::new(
+        [
+            "smart_home_controller:8080".to_string(),
+            "thermostat:8080".to_string(),
+        ]
+        .to_vec(),
+        46,
+        75,
+        0.53,
+        0.85,
+        5,
+    );
     weather_sensor.set_routes(args[1..].to_vec());
     weather_sensor.main_loop();
 
     Ok(())
 }
-
