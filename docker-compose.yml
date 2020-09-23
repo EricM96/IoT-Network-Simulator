@@ -24,13 +24,14 @@ services:
       SH_CONTROLLER: 172.18.0.5
       WEATHER_SENSOR: 172.18.0.6
       THERMOSTAT: 172.18.0.7
+      GARAGE_DOOR: 172.18.0.8
     deploy:
       restart_policy:
         condition: on-failure
 
   smart_home_controller:
     build: ./devices/smart_home_controller
-    command: smart_home_controller 172.18.0.2 172.18.0.6 172.18.0.7
+    command: smart_home_controller 172.18.0.2 172.18.0.6 172.18.0.7 172.18.0.8
     cap_add:
       - NET_ADMIN
     expose:
@@ -64,6 +65,20 @@ services:
     networks:
       iot:
         ipv4_address: 172.18.0.7
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  garage_door:
+    build: ./devices/garage_door
+    command: garage_door 172.18.0.2 172.18.0.5
+    cap_add:
+      - NET_ADMIN
+    expose:
+      - "8080"
+    networks:
+      iot:
+        ipv4_address: 172.18.0.8
     deploy:
       restart_policy:
         condition: on-failure

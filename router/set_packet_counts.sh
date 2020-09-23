@@ -22,6 +22,10 @@ iptables -N thermostat
 iptables -A thermostat -s $THERMOSTAT
 iptables -A thermostat -d $THERMOSTAT
 
+iptables -N garage_door
+iptables -A garage_door -s $GARAGE_DOOR
+iptables -A garage_door -d $GARAGE_DOOR
+
 iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE
 # iptables -A FORWARD -s $ECHO_CLIENT -j echo_client_tcp
 # iptables -A FORWARD -d $ECHO_CLIENT -j echo_client_tcp
@@ -37,4 +41,7 @@ iptables -A FORWARD -d $WEATHER_SENSOR -p tcp -j weather_sensor
 
 iptables -A FORWARD -s $THERMOSTAT -p tcp -j thermostat
 iptables -A FORWARD -d $THERMOSTAT -p tcp -j thermostat
+
+iptables -A FORWARD -s $GARAGE_DOOR -p tcp -j garage_door
+iptables -A FORWARD -d $GARAGE_DOOR -p tcp -j garage_door
 

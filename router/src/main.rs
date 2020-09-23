@@ -29,6 +29,7 @@ struct TrafficWindow {
     smart_home_controller: HostTraffic,
     weather_sensor: HostTraffic,
     thermostat: HostTraffic,
+    garage_door: HostTraffic,
 }
 
 #[get("/")]
@@ -61,6 +62,10 @@ fn index() -> Json<TrafficWindow> {
             parts.next().unwrap().unwrap(),
         ),
         thermostat: HostTraffic::new(
+            parts.next().unwrap().unwrap(),
+            parts.next().unwrap().unwrap(),
+        ),
+        garage_door: HostTraffic::new(
             parts.next().unwrap().unwrap(),
             parts.next().unwrap().unwrap(),
         ),
