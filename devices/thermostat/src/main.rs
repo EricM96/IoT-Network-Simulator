@@ -3,13 +3,14 @@ use std::env;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
+//========================== Subscriber Component =================================================
 #[derive(Default)]
-struct TcpEchoServer {
+struct Thermostat {
     port: String,
 }
 
-impl Device for TcpEchoServer {}
-impl Subscriber for TcpEchoServer {
+impl Device for Thermostat {}
+impl Subscriber for Thermostat {
     fn loop_callback(&self, mut stream: TcpStream) {
         let mut buffer = [0; 128];
 
@@ -20,8 +21,7 @@ impl Subscriber for TcpEchoServer {
                     "Message received: {:?}",
                     String::from_utf8_lossy(&buffer[..msg_len])
                 );
-                stream.write("pong".as_bytes()).unwrap();
-                stream.flush().unwrap();
+                stream.write("Ok".as_bytes()).unwrap();
             }
             Err(error) => println!("Error encountered: {}", error),
         };
@@ -37,20 +37,19 @@ impl Subscriber for TcpEchoServer {
     }
 }
 
-impl TcpEchoServer {
-    pub fn new(port: String) -> TcpEchoServer {
-        TcpEchoServer {
+impl Thermostat {
+    pub fn new(port: String) -> Thermostat {
+        Thermostat {
             port: port.to_string(),
         }
     }
 }
 
-fn main() -> std::io::Result<()> {
+//========================== Publisher Component ==================================================
+fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let server = TcpEchoServer::new("8080".to_string());
-    server.set_routes(args[1..].to_vec());
-    server.main_loop();
-
-    Ok(())
+    let therm = Thermostat::new("8080".to_string());
+    therm.set_routes(args[1..].to_vec());
+    therm.main_loop();
 }
