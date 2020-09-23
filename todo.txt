@@ -1,16 +1,9 @@
-- add additional devices
-    * lights (Subscriber <- motion sensor)
-    * motion sensor (Publisher -> lights)
-    x smart fridge (Publisher -> smc)
-    x weather sensors (Publisher -> therm, smc)
-    x Garage door (Subscriber <- smc)
-    x Thermostat (Subscriber <- weather, smc)
-    x Smart home controller (Subsriber/ <- ws, smart fridge,
-                             Publisher -> garage door, therm)
-
 - add data aggregation module
     * Capture mode, write data to database
     * Live mode, create heatmap and send it to analytics module
 
 - add analytics module
 
+- add DDoS capability
+    * Add compromised device trait
+    * Add cnc capability
