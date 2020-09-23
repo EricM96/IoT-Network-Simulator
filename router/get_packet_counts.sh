@@ -16,8 +16,8 @@ thermostat_packets_in=$(iptables -nvL thermostat | awk 'FNR == 4 {print $1; exit
 garage_door_packets_out=$(iptables -nvL garage_door | awk 'FNR == 3 {print $1; exit}')
 garage_door_packets_in=$(iptables -nvL garage_door | awk 'FNR == 4 {print $1; exit}')
 
-fridge_door_packets_out=$(iptables -nvL refridgerator | awk 'FNR == 3 {print $1; exit}')
-fridge_door_packets_in=$(iptables -nvL refridgerator | awk 'FNR == 4 {print $1; exit}')
+fridge_packets_out=$(iptables -nvL refridgerator | awk 'FNR == 3 {print $1; exit}')
+fridge_packets_in=$(iptables -nvL refridgerator | awk 'FNR == 4 {print $1; exit}')
 
 iptables -Z smart_home_controller
 iptables -Z weather_sensor
@@ -25,5 +25,5 @@ iptables -Z thermostat
 
 echo "$shc_packets_in $shc_packets_out $weather_packets_in $weather_packets_out \
       $thermostat_packets_in $thermostat_packets_out $garage_door_packets_in \
-      $garage_door_packets_out $fridge_door_packets_in $garage_door_packets_out"
+      $garage_door_packets_out $fridge_packets_in $garage_packets_out"
 
