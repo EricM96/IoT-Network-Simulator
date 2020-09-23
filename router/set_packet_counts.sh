@@ -30,6 +30,14 @@ iptables -N refridgerator
 iptables -A refridgerator -s $FRIDGE
 iptables -A refridgerator -d $FRIDGE
 
+iptables -N lights
+iptables -A lights -s $LIGHTS
+iptables -A lights -d $LIGHTS
+
+iptables -N motion_sensor
+iptables -A motion_sensor -s $MOTION_SENSOR
+iptables -A motion_sensor -d $MOTION_SENSOR
+
 iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE
 # iptables -A FORWARD -s $ECHO_CLIENT -j echo_client_tcp
 # iptables -A FORWARD -d $ECHO_CLIENT -j echo_client_tcp
@@ -51,4 +59,10 @@ iptables -A FORWARD -d $GARAGE_DOOR -p tcp -j garage_door
 
 iptables -A FORWARD -s $FRIDGE -p tcp -j refridgerator
 iptables -A FORWARD -d $FRIDGE -p tcp -j refridgerator
+
+iptables -A FORWARD -s $LIGHTS -p tcp -j lights
+iptables -A FORWARD -d $LIGHTS -p tcp -j lights
+
+iptables -A FORWARD -s $MOTION_SENSOR -p tcp -j motion_sensor
+iptables -A FORWARD -d $MOTION_SENSOR -p tcp -j motion_sensor
 

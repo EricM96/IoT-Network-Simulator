@@ -1,7 +1,7 @@
 - add additional devices
     * lights (Subscriber <- motion sensor)
     * motion sensor (Publisher -> lights)
-    * smart fridge (Publisher -> smc)
+    x smart fridge (Publisher -> smc)
     x weather sensors (Publisher -> therm, smc)
     x Garage door (Subscriber <- smc)
     x Thermostat (Subscriber <- weather, smc)

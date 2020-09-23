@@ -26,6 +26,8 @@ services:
       THERMOSTAT: 172.18.0.7
       GARAGE_DOOR: 172.18.0.8
       FRIDGE: 172.18.0.9
+      LIGHTS: 172.18.0.10
+      MOTION_SENSOR: 172.18.0.11
     deploy:
       restart_policy:
         condition: on-failure
@@ -92,6 +94,32 @@ services:
     networks:
       iot:
         ipv4_address: 172.18.0.9
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  lights:
+    build: ./devices/lights
+    command: lights 172.18.0.2 172.18.0.11
+    cap_add:
+      - NET_ADMIN
+    expose:
+      - "8080"
+    networks:
+      iot:
+        ipv4_address: 172.18.0.10
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  motion_sensor:
+    build: ./devices/motion_sensor
+    command: motion_sensor 172.18.0.2 172.18.0.10
+    cap_add:
+      - NET_ADMIN
+    networks:
+      iot:
+        ipv4_address: 172.18.0.11
     deploy:
       restart_policy:
         condition: on-failure
