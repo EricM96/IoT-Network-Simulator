@@ -6,6 +6,7 @@ networks:
       config:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
+  analysis:
 
 services:
   router:
@@ -123,6 +124,22 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+
+  data_aggregation:
+    build: ./data_aggregation
+    command: python app.py
+    networks:
+      - iot
+      - analysis
+
+  db:
+   image: mongo
+   environment:
+     - MONGO_INITDB_DATABASE=traffic_windows
+     - MONGO_INITDB_ROOT_USERNAME=root
+     - MONGO_INITDB_ROOT_PASSWORD=password
+   networks:
+     - analysis
 
     # echo-server:
     #   build: ./devices/tcp-echo-server

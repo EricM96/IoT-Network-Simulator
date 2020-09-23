@@ -1,0 +1,6 @@
+pymongo
+requests
+numpy
+matplotlib
+seaborn
+
