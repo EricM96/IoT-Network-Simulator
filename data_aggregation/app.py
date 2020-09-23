@@ -1,13 +1,19 @@
-from requests import get
+from requests import get, post
 from time import sleep, time
 from pymongo import MongoClient
 from threading import Thread
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
 
 
 class DataAggregationModule(object):
     router = "http://router:8080/"
     interval = 15
 
+
+class DataCollecter(DataAggregationModule):
     db_username = "root"
     db_password = "password"
     db_url = f"mongodb://{db_username}:{db_password}@db:27017/"
@@ -43,6 +49,25 @@ class DataAggregationModule(object):
             Thread(target=self._write_to_db, args=(traffic_window, )).run()
 
 
+class LiveDataTransfer(DataAggregationModule):
+    def main_loop(self):
+        while True:
+            sleep(self.interval)
+
+            r = get(self.router)
+
+            traffic_window = r.json()
+            traffic_window = pd.DataFrame.from_dict(
+                traffic_window, orient='index')
+            # _, ax = plt.subplots(1, 1, figsize=(1, 1), dpi=23)
+            _ = sns.heatmap(traffic_window, xticklabels=True,
+                            yticklabels=True, cbar=False, vmin=0, vmax=100)
+            buffer = io.BytesIO()
+            plt.savefig(buffer, format='png')
+            with open(buffer.seek(0), 'rb') as data:
+                post('http://traffic_analysis/api', data=data)
+
+
 if __name__ == "__main__":
-    agg_module = DataAggregationModule('normal')
+    agg_module = LiveDataTransfer()
     agg_module.main_loop()
