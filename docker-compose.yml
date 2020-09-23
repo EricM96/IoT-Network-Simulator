@@ -134,10 +134,7 @@ services:
 
   db:
    image: mongo
-   environment:
-     - MONGO_INITDB_DATABASE=traffic_windows
-     - MONGO_INITDB_ROOT_USERNAME=root
-     - MONGO_INITDB_ROOT_PASSWORD=password
+   restart: always
    networks:
      - analysis
 
