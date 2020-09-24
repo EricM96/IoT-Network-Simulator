@@ -6,6 +6,7 @@ networks:
       config:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
+  analysis:
 
 services:
   router:
@@ -123,6 +124,29 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+
+  data_aggregation:
+    build: ./data_aggregation
+    command: python app.py
+    volumes: 
+      - ./data_aggregation:/app
+    networks:
+      - iot
+      - analysis
+
+  db:
+   image: mongo
+   restart: always
+   networks:
+     - analysis
+
+  traffic_analysis:
+    build: ./traffic_analysis
+    command: python app.py
+    volumes:
+      - ./traffic_analysis:/app
+    networks:
+      - analysis
 
     # echo-server:
     #   build: ./devices/tcp-echo-server
