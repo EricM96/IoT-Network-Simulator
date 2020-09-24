@@ -140,6 +140,14 @@ services:
    networks:
      - analysis
 
+  traffic_analysis:
+    build: ./traffic_analysis
+    command: python app.py
+    volumes:
+      - ./traffic_analysis:/app
+    networks:
+      - analysis
+
     # echo-server:
     #   build: ./devices/tcp-echo-server
     #   command: tcp-echo-server 172.18.0.2 172.18.0.4

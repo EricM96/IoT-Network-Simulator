@@ -64,8 +64,8 @@ class LiveDataTransfer(DataAggregationModule):
                             yticklabels=True, cbar=False, vmin=0, vmax=100)
             buffer = io.BytesIO()
             plt.savefig(buffer, format='png')
-            with open(buffer.seek(0), 'rb') as data:
-                post('http://traffic_analysis/api', data=data)
+            files = {'img': buffer.getvalue()}
+            post('http://traffic_analysis:8080/api', files=files)
 
 
 if __name__ == "__main__":
