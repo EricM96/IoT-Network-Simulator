@@ -9,7 +9,7 @@ app = Flask(__name__)
 model = torch.hub.load('pytorch/vision:v0.4.2', 'squeezenet1_1',
                        pretrained=False)
 model.classifier[1] = torch.nn.Conv2d(
-    512, 3, kernel_size=(1, 1), stride=(1, 1))
+    512, 2, kernel_size=(1, 1), stride=(1, 1))
 preprocess = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -23,8 +23,8 @@ model.eval()
 
 
 def transform_img(img_bytes):
-    img = Image.open(io.BytesIO(img_bytes))
-    return preprocess(img)
+    img = Image.open(io.BytesIO(img_bytes)).convert('RGB')
+    return preprocess(img).unsqueeze(0)
 
 
 def predict(img_bytes):
@@ -41,7 +41,7 @@ def api_controller():
     file = request.files['img']
     img_bytes = file.read()
     prediction = predict(img_bytes)
-    return {'prediction': prediction}
+    return {'prediction': prediction.item()}
 
 
 if __name__ == '__main__':

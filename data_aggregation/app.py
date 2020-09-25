@@ -10,7 +10,7 @@ import io
 
 class DataAggregationModule(object):
     router = "http://router:8080/"
-    interval = 15
+    interval = 3
 
 
 class DataCollecter(DataAggregationModule):
@@ -65,7 +65,9 @@ class LiveDataTransfer(DataAggregationModule):
             buffer = io.BytesIO()
             plt.savefig(buffer, format='png')
             files = {'img': buffer.getvalue()}
-            post('http://traffic_analysis:8080/api', files=files)
+            response = post('http://traffic_analysis:8080/api', files=files)
+            prediction = response.text
+            print(prediction, flush=True)
 
 
 if __name__ == "__main__":
