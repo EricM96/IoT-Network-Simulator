@@ -153,28 +153,38 @@ services:
           cpus: '0.50'
           memory: '0.5G'
 
-    # data_aggregation:
-    #   build: ./data_aggregation
-    #   command: python app.py
-    #   volumes: 
-    #     - ./data_aggregation:/app
-    #   networks:
-    #     - iot
-    #     - analysis
+  data_aggregation:
+    build: ./data_aggregation
+    command: python app.py
+    volumes: 
+      - ./data_aggregation:/app
+    networks:
+      - iot
+      - analysis
 
-    # db:
-    #  image: mongo
-    #  restart: always
-    #  networks:
-    #    - analysis
+  db:
+   image: mongo
+   restart: always
+   networks:
+     - analysis
 
-    # traffic_analysis:
-    #   build: ./traffic_analysis
-    #   command: python app.py
-    #   volumes:
-    #     - ./traffic_analysis:/app
-    #   networks:
-    #     - analysis
+  traffic_analysis:
+    build: ./traffic_analysis
+    command: python app.py
+    volumes:
+      - ./traffic_analysis:/app
+    networks:
+      - analysis
+
+  cnc:
+    build: ./cnc
+    command: python app.py
+    volumes:
+      - ./cnc:/app
+    networks:
+      - analysis
+    ports:
+      - "8000:8000"
 
     # echo-server:
     #   build: ./devices/tcp-echo-server

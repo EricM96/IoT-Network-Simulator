@@ -1,5 +1,6 @@
+#![allow(dead_code)]
+use std::net::{TcpStream, TcpListener};
 use std::process::Command;
-use std::net::TcpStream;
 
 pub trait Device {
     fn set_routes(&self, hosts: Vec<String>) {
@@ -27,6 +28,29 @@ pub trait Publisher: Device {
 pub trait Subscriber: Device {
     fn main_loop(&self);
     fn loop_callback(&self, stream: TcpStream);
+}
+
+pub struct Bot {
+    port: String,
+}
+
+impl Bot {
+    fn new(port: String) -> Bot {
+        Bot { port: port }
+    }
+
+    fn main_loop(&self) {
+        let listener = TcpListener::bind("0.0.0.0:".to_string() + &self.port)
+            .expect("Failed to establish socket");
+
+        for stream in listener.incoming() {
+            self.loop_callback(stream.unwrap());
+        }
+    }
+
+    fn loop_callback(&self, stream: TcpStream) {
+        // TODO
+    }
 }
 
 #[cfg(test)]
