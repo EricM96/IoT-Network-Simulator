@@ -46,6 +46,10 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '0.5G'
 
   weather_sensor:
     build: ./devices/weather_sensor
@@ -58,6 +62,10 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '0.5G'
 
   thermostat:
     build: ./devices/thermostat
@@ -72,6 +80,10 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '0.5G'
 
   garage_door:
     build: ./devices/garage_door
@@ -86,6 +98,10 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '0.5G'
 
   refridgerator:
     build: ./devices/refridgerator
@@ -98,6 +114,10 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '0.5G'
 
   lights:
     build: ./devices/lights
@@ -112,6 +132,10 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '0.5G'
 
   motion_sensor:
     build: ./devices/motion_sensor
@@ -124,29 +148,33 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '0.5G'
 
-  data_aggregation:
-    build: ./data_aggregation
-    command: python app.py
-    volumes: 
-      - ./data_aggregation:/app
-    networks:
-      - iot
-      - analysis
+    # data_aggregation:
+    #   build: ./data_aggregation
+    #   command: python app.py
+    #   volumes: 
+    #     - ./data_aggregation:/app
+    #   networks:
+    #     - iot
+    #     - analysis
 
-  db:
-   image: mongo
-   restart: always
-   networks:
-     - analysis
+    # db:
+    #  image: mongo
+    #  restart: always
+    #  networks:
+    #    - analysis
 
-  traffic_analysis:
-    build: ./traffic_analysis
-    command: python app.py
-    volumes:
-      - ./traffic_analysis:/app
-    networks:
-      - analysis
+    # traffic_analysis:
+    #   build: ./traffic_analysis
+    #   command: python app.py
+    #   volumes:
+    #     - ./traffic_analysis:/app
+    #   networks:
+    #     - analysis
 
     # echo-server:
     #   build: ./devices/tcp-echo-server
