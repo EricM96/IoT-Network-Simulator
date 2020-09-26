@@ -66,3 +66,6 @@ iptables -A FORWARD -d $LIGHTS -p tcp -j lights
 iptables -A FORWARD -s $MOTION_SENSOR -p tcp -j motion_sensor
 iptables -A FORWARD -d $MOTION_SENSOR -p tcp -j motion_sensor
 
+# iptables -A FORWARD -s $TARGET -p tcp -j ACCEPT
+# iptables -A FORWARD -d $TARGET -p tcp -j ACCEPT
+

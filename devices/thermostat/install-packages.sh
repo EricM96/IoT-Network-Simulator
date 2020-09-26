@@ -4,10 +4,10 @@ set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get update
-apt-get upgrade
+apt-get -y update
+apt-get -y upgrade
 
-apt-get install -y t50
+apt-get -y install t50
 
 apt-get clean
 

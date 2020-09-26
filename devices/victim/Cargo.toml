@@ -1,5 +1,5 @@
 [package]
-name = "target"
+name = "victim"
 version = "0.1.0"
 authors = ["Eric McCullough <eric96@live.missouristate.edu>"]
 edition = "2018"

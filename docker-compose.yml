@@ -24,6 +24,8 @@ services:
     networks:
       iot:
         ipv4_address: 172.18.0.2
+      internet:
+        ipv4_address: 172.20.0.3
     environment:
       # ECHO_SERVER: 172.18.0.3
       # ECHO_CLIENT: 172.18.0.4
@@ -34,6 +36,7 @@ services:
       FRIDGE: 172.18.0.9
       LIGHTS: 172.18.0.10
       MOTION_SENSOR: 172.18.0.11
+      TARGET: 172.20.0.2
     deploy:
       restart_policy:
         condition: on-failure
@@ -95,6 +98,7 @@ services:
     command: garage_door 172.18.0.2 172.18.0.5 172.20.0.2
     cap_add:
       - NET_ADMIN
+    privileged: true
     expose:
       - "8080"
     networks:
@@ -158,14 +162,14 @@ services:
           cpus: '0.50'
           memory: '0.5G'
 
-  data_aggregation:
-    build: ./data_aggregation
-    command: python app.py
-    volumes: 
-      - ./data_aggregation:/app
-    networks:
-      - iot
-      - analysis
+          # data_aggregation:
+          #   build: ./data_aggregation
+          #   command: python app.py
+          #   volumes:
+          #     - ./data_aggregation:/app
+          #   networks:
+          #     - iot
+          #     - analysis
 
   db:
    image: mongo
@@ -192,9 +196,11 @@ services:
     ports:
       - "8000:8000"
 
-  target:
-    image: ubuntu
-    command: /bin/bash
+  victim:
+    build: ./devices/victim
+    command: victim 172.20.0.3 172.18.0.5 172.18.0.6 172.18.0.7 172.18.0.8 172.18.0.9 172.18.0.10 172.18.0.11
+    cap_add:
+      - NET_ADMIN
     networks:
       internet:
         ipv4_address: 172.20.0.2

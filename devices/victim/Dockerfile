@@ -5,5 +5,5 @@ COPY . .
 
 RUN cargo install --path .
 
-CMD ["target"]
+CMD ["victim"]
 
