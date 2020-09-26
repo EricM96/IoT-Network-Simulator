@@ -15,31 +15,31 @@
                 <form id="devices" name='form' method="post" action ="/">
                     <div>
                         <input type="checkbox" id="garage_door" name="garage_door">
-                        <label for="garage_door">Garage Door</label>
+                        <label for="garage_door">Garage Door ({{network_state.garage_door}})</label>
                     </div>
                     <div>
                         <input type="checkbox" id="lights" name="lights">
-                        <label for="lights">Lights</label>
+                        <label for="lights">Lights ({{network_state.lights}})</label>
                     </div>
                     <div>
                         <input type="checkbox" id="motion_sensor" name="motion_sensor">
-                        <label for="motion_sensor">Motion Sensor</label>
+                        <label for="motion_sensor">Motion Sensor ({{network_state.motion_sensor}})</label>
                     </div>
                     <div>
                         <input type="checkbox" id="refridgerator" name="refridgerator">
-                        <label for="refridgerator">Refridgerator</label>
+                        <label for="refridgerator">Refridgerator ({{network_state.refridgerator}})</label>
                     </div>
                     <div>
                         <input type="checkbox" id="smart_home_controller" name="smart_home_controller">
-                        <label for="smart_home_controller">Smart Home Controller</label>
+                        <label for="smart_home_controller">Smart Home Controller ({{network_state.smart_home_controller}})</label>
                     </div>
                     <div>
                         <input type="checkbox" id="thermostat" name="thermostat">
-                        <label for="thermostat">Thermostat</label>
+                        <label for="thermostat">Thermostat ({{network_state.thermostat}})</label>
                     </div>
                     <div>
                         <input type="checkbox" id="weather_sensor" name="weather_sensor">
-                        <label for="weather_sensor">Weather Sensor</label>
+                        <label for="weather_sensor">Weather Sensor ({{network_state.weather_sensor}})</label>
                     </div>
                     <div>
                         <button type="submit">Begin DDoS</button>

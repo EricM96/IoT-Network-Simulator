@@ -7,6 +7,11 @@ networks:
         - subnet: 172.18.0.0/16
           gateway: 172.18.0.1
   analysis:
+  internet:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
 
 services:
   router:
@@ -35,7 +40,7 @@ services:
 
   smart_home_controller:
     build: ./devices/smart_home_controller
-    command: smart_home_controller 172.18.0.2 172.18.0.6 172.18.0.7 172.18.0.8 172.18.0.9
+    command: smart_home_controller 172.18.0.2 172.18.0.6 172.18.0.7 172.18.0.8 172.18.0.9 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -53,7 +58,7 @@ services:
 
   weather_sensor:
     build: ./devices/weather_sensor
-    command: weather_sensor 172.18.0.2 172.18.0.5 172.18.0.7
+    command: weather_sensor 172.18.0.2 172.18.0.5 172.18.0.7 172.20.0.2
     cap_add:
       - NET_ADMIN
     networks:
@@ -69,7 +74,7 @@ services:
 
   thermostat:
     build: ./devices/thermostat
-    command: thermostat 172.18.0.2 172.18.0.5 172.18.0.6
+    command: thermostat 172.18.0.2 172.18.0.5 172.18.0.6 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -87,7 +92,7 @@ services:
 
   garage_door:
     build: ./devices/garage_door
-    command: garage_door 172.18.0.2 172.18.0.5
+    command: garage_door 172.18.0.2 172.18.0.5 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -105,7 +110,7 @@ services:
 
   refridgerator:
     build: ./devices/refridgerator
-    command: refridgerator 172.18.0.2 172.18.0.5
+    command: refridgerator 172.18.0.2 172.18.0.5 172.20.0.2
     cap_add:
       - NET_ADMIN
     networks:
@@ -121,7 +126,7 @@ services:
 
   lights:
     build: ./devices/lights
-    command: lights 172.18.0.2 172.18.0.11
+    command: lights 172.18.0.2 172.18.0.11 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -139,7 +144,7 @@ services:
 
   motion_sensor:
     build: ./devices/motion_sensor
-    command: motion_sensor 172.18.0.2 172.18.0.10
+    command: motion_sensor 172.18.0.2 172.18.0.10 172.20.0.2
     cap_add:
       - NET_ADMIN
     networks:
@@ -183,8 +188,16 @@ services:
       - ./cnc:/app
     networks:
       - analysis
+      - iot
     ports:
       - "8000:8000"
+
+  target:
+    image: ubuntu
+    command: /bin/bash
+    networks:
+      internet:
+        ipv4_address: 172.20.0.2
 
     # echo-server:
     #   build: ./devices/tcp-echo-server

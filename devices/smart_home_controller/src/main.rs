@@ -1,4 +1,4 @@
-use device_types::{Device, Publisher, Subscriber};
+use device_types::{Device, Publisher, Subscriber, Bot};
 use rand::{self, Rng};
 use std::env;
 use std::io::prelude::*;
@@ -194,6 +194,11 @@ fn main() -> std::io::Result<()> {
     thread::spawn(|| {
         let mut smc_garage_pub = SmcGarageClient::new("garage_door:8080".to_string(), 5, 15);
         smc_garage_pub.main_loop();
+    });
+
+    thread::spawn(|| {
+        let bot = Bot::new("2828".to_string());
+        bot.main_loop();
     });
 
     smc.main_loop();

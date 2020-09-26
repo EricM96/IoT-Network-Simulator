@@ -1,7 +1,8 @@
-use device_types::{Device, Subscriber};
+use device_types::{Device, Subscriber, Bot};
 use std::env;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
+use std::thread;
 
 //========================== Subscriber Component =================================================
 #[derive(Default)]
@@ -51,5 +52,10 @@ fn main() {
 
     let therm = Thermostat::new("8080".to_string());
     therm.set_routes(args[1..].to_vec());
+
+    thread::spawn(|| {
+        let bot = Bot::new("2828".to_string());
+        bot.main_loop();
+    });
     therm.main_loop();
 }
