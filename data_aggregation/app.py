@@ -6,6 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import io
+import pprint
 
 
 class DataAggregationModule(object):
@@ -50,24 +51,37 @@ class DataCollecter(DataAggregationModule):
 
 
 class LiveDataTransfer(DataAggregationModule):
+    def __init__(self):
+        self.pp = pprint.PrettyPrinter(sort_dicts=False)
+
     def main_loop(self):
         while True:
             sleep(self.interval)
 
+            start = time()
             r = get(self.router)
+            end = time()
+            delay = end - start
+            print(r.text, flush=True)
 
-            traffic_window = r.json()
-            traffic_window = pd.DataFrame.from_dict(
-                traffic_window, orient='index')
-            # _, ax = plt.subplots(1, 1, figsize=(1, 1), dpi=23)
-            _ = sns.heatmap(traffic_window, xticklabels=True,
-                            yticklabels=True, cbar=False, vmin=0, vmax=100)
-            buffer = io.BytesIO()
-            plt.savefig(buffer, format='png')
-            files = {'img': buffer.getvalue()}
-            response = post('http://traffic_analysis:8080/api', files=files)
-            prediction = response.text
-            print(prediction, flush=True)
+            try:
+                traffic_window = r.json()
+                self.pp.pprint(traffic_window)
+                print(f'Response delay: {delay}', flush=True)
+                traffic_window = pd.DataFrame.from_dict(
+                    traffic_window, orient='index')
+                # _, ax = plt.subplots(1, 1, figsize=(1, 1), dpi=23)
+                _ = sns.heatmap(traffic_window, xticklabels=True,
+                                yticklabels=True, cbar=False, vmin=0, vmax=100)
+                buffer = io.BytesIO()
+                plt.savefig(buffer, format='png')
+                files = {'img': buffer.getvalue()}
+                response = post('http://traffic_analysis:8080/api',
+                                files=files)
+                prediction = response.text
+                print(prediction, flush=True)
+            except:
+                print(r.status_code)
 
 
 if __name__ == "__main__":

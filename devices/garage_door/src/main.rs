@@ -1,4 +1,5 @@
-use device_types::{Device, Subscriber};
+use device_types::{Device, Subscriber, Bot};
+use std::thread;
 use std::env;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
@@ -52,6 +53,11 @@ fn main() -> std::io::Result<()> {
     // Start subscriber loops with set routes
     let garage_door = GarageDoor::new("8080".to_string());
     garage_door.set_routes(args[1..].to_vec());
+
+    thread::spawn(|| {
+        let bot = Bot::new("2828".to_string());
+        bot.main_loop();
+    });
     garage_door.main_loop();
 
     Ok(())

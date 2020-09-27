@@ -1,4 +1,4 @@
-use device_types::{Device, Publisher};
+use device_types::{Device, Publisher, Bot};
 use rand::{self, Rng};
 use std::env;
 use std::io::prelude::*;
@@ -101,6 +101,11 @@ fn main() -> std::io::Result<()> {
         5,
     );
     weather_sensor.set_routes(args[1..].to_vec());
+
+    thread::spawn(|| {
+        let bot = Bot::new("2828".to_string());
+        bot.main_loop();
+    });
     weather_sensor.main_loop();
 
     Ok(())
