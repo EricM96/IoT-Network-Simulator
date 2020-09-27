@@ -11,35 +11,43 @@
     <body>
         <div id="content-container">
             <div id="content-container-center">
-                <legend>Select devices and issue a command</legend>
+                <legend>Available devices</legend>
                 <form id="devices" name='form' method="post" action ="/">
                     <div>
                         <input type="checkbox" id="garage_door" name="garage_door">
-                        <label for="garage_door">Garage Door ({{network_state.garage_door}})</label>
+                        <label for="garage_door">Garage Door</label>
                     </div>
                     <div>
                         <input type="checkbox" id="lights" name="lights">
-                        <label for="lights">Lights ({{network_state.lights}})</label>
+                        <label for="lights">Lights</label>
                     </div>
                     <div>
                         <input type="checkbox" id="motion_sensor" name="motion_sensor">
-                        <label for="motion_sensor">Motion Sensor ({{network_state.motion_sensor}})</label>
+                        <label for="motion_sensor">Motion Sensor</label>
                     </div>
                     <div>
                         <input type="checkbox" id="refridgerator" name="refridgerator">
-                        <label for="refridgerator">Refridgerator ({{network_state.refridgerator}})</label>
+                        <label for="refridgerator">Refridgerator</label>
                     </div>
                     <div>
                         <input type="checkbox" id="smart_home_controller" name="smart_home_controller">
-                        <label for="smart_home_controller">Smart Home Controller ({{network_state.smart_home_controller}})</label>
+                        <label for="smart_home_controller">Smart Home Controller</label>
                     </div>
                     <div>
                         <input type="checkbox" id="thermostat" name="thermostat">
-                        <label for="thermostat">Thermostat ({{network_state.thermostat}})</label>
+                        <label for="thermostat">Thermostat</label>
                     </div>
                     <div>
                         <input type="checkbox" id="weather_sensor" name="weather_sensor">
-                        <label for="weather_sensor">Weather Sensor ({{network_state.weather_sensor}})</label>
+                        <label for="weather_sensor">Weather Sensor</label>
+                    </div>
+                    <div>
+                        <label for="rate">Intensity of traffic from devices (packets/sec:</label>
+                        <input type="number" name="rate" id="rate" required>
+                    </div>
+                    <div>
+                        <label for="duration">Duration of attack (sec):</label>
+                        <input type="number" name="duration" id="duration" required>
                     </div>
                     <div>
                         <button type="submit">Begin DDoS</button>

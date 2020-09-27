@@ -38,12 +38,11 @@ iptables -N motion_sensor
 iptables -A motion_sensor -s $MOTION_SENSOR
 iptables -A motion_sensor -d $MOTION_SENSOR
 
-iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE
-# iptables -A FORWARD -s $ECHO_CLIENT -j echo_client_tcp
-# iptables -A FORWARD -d $ECHO_CLIENT -j echo_client_tcp
+iptables -N rate_limit
+iptables -A rate_limit --match limit --limit 1000/sec --limit-burst 20 -j ACCEPT
+iptables -A rate_limit -j DROP
 
-# iptables -A FORWARD -s $ECHO_SERVER -j echo_server_tcp
-# iptables -A FORWARD -d $ECHO_SERVER -j echo_server_tcp
+iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE
 
 iptables -A FORWARD -s $SH_CONTROLLER -p tcp -j smart_home_controller
 iptables -A FORWARD -d $SH_CONTROLLER -p tcp -j smart_home_controller
@@ -66,6 +65,5 @@ iptables -A FORWARD -d $LIGHTS -p tcp -j lights
 iptables -A FORWARD -s $MOTION_SENSOR -p tcp -j motion_sensor
 iptables -A FORWARD -d $MOTION_SENSOR -p tcp -j motion_sensor
 
-# iptables -A FORWARD -s $TARGET -p tcp -j ACCEPT
-# iptables -A FORWARD -d $TARGET -p tcp -j ACCEPT
+iptables -A FORWARD -j rate_limit
 

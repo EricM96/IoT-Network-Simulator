@@ -1,9 +1,0 @@
-- add data aggregation module
-    * Capture mode, write data to database
-    * Live mode, create heatmap and send it to analytics module
-
-- add analytics module
-
-- add DDoS capability
-    * Add compromised device trait
-    * Add cnc capability
