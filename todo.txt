@@ -1,0 +1,5 @@
+[X] Add compose file for live mode
+[ ] Add compose files for data collection
+[ ] Add command line arguments to alter behavior of the data aggregation module and cnc
+
+[ ] write readme
