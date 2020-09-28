@@ -15,7 +15,7 @@ def main():
         p = subprocess.run(args, capture_output=True)
         print(p.stdout)
         print(p.stderr)
-        time.sleep(60)
+        time.sleep(60 * 60 * 4)
         args = ['docker-compose', '-f', file, 'stop']
         p = subprocess.run(args, capture_output=True)
         print(p.stdout)

@@ -12,7 +12,7 @@
         <cmd> <true | false> <hosts[]>
 [X] Add compose files for each collection stage
 [X] Add data persistence for mongo
-[ ] Test data collection
-[ ] Write data collection script
+[X] Test data collection
+[X] Write data collection script
 
 [ ] write readme
