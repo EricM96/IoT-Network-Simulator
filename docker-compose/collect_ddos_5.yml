@@ -166,18 +166,33 @@ services:
   data_aggregation:
     build: ../data_aggregation
     command: python app.py collect 5 ddos_tcp ddos_tcp_5
+    restart: always
     volumes:
       - ../data_aggregation:/app
     networks:
       - iot
       - analysis
+    depends_on:
+      - "db"
+      - "garage_door"
+      - "lights"
+      - "motion_sensor"
+      - "refridgerator"
+      - "smart_home_controller"
+      - "weather_sensor"
+      - "thermostat"
 
   db:
-   image: mongo
-   restart: always
-   volumes: ../mongo:/data/db
-   networks:
-     - analysis
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: traffic_windows
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ../mongo:/data/db
+    networks:
+      - analysis
 
   # ATTACKER #######################################################################################
   cnc:

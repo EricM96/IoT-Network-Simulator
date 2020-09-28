@@ -73,7 +73,7 @@ fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let bot_mode = args[1] == "true";
 
-    let mut motion_sensor = MotionSensor::new("lights:8080".to_string(), 5, 15);
+    let mut motion_sensor = MotionSensor::new("lights:8080".to_string(), 1, 30);
     motion_sensor.set_routes(args[2..].to_vec());
 
     thread::spawn(move || {

@@ -49,6 +49,8 @@ impl GarageDoor {
 //========================== Main Method ==========================================================
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
+    println!("Args: {:?}", args);
+    println!("Args: {:?}", args[2..].to_vec());
     let bot_mode: bool = args[1] == "true";
 
     // Start subscriber loops with set routes

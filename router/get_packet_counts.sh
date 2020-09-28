@@ -1,9 +1,4 @@
 #!/bin/bash
-# client_packets_in=$(iptables -nvL echo_client_tcp | awk 'FNR == 3 {print $1; exit}')
-# client_packets_out=$(iptables -nvL echo_client_tcp | awk 'FNR == 4 {print $1; exit}')
-# server_packets_in=$(iptables -nvL echo_server_tcp | awk 'FNR == 3 {print $1; exit}')
-# server_packets_out=$(iptables -nvL echo_server_tcp | awk 'FNR == 4 {print $1; exit}')
-
 shc_packets_out=$(iptables -nvL smart_home_controller | awk 'FNR == 3 {print $1; exit}')
 shc_packets_in=$(iptables -nvL smart_home_controller | awk 'FNR == 4 {print $1; exit}')
 
@@ -33,8 +28,5 @@ iptables -Z refridgerator
 iptables -Z lights
 iptables -Z motion_sensor
 
-echo "$shc_packets_in $shc_packets_out $weather_packets_in $weather_packets_out \
-      $thermostat_packets_in $thermostat_packets_out $garage_door_packets_in \
-      $garage_door_packets_out $fridge_packets_in $fridge_packets_out $lights_packets_in \
-      $lights_packets_out $motion_sensor_packets_in $motion_sensor_packets_out"
+echo "$shc_packets_in $shc_packets_out $weather_packets_in $weather_packets_out $thermostat_packets_in $thermostat_packets_out $garage_door_packets_in $garage_door_packets_out $fridge_packets_in $fridge_packets_out $lights_packets_in $lights_packets_out $motion_sensor_packets_in $motion_sensor_packets_out"
 

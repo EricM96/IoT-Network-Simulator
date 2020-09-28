@@ -99,7 +99,7 @@ fn main() -> std::io::Result<()> {
         75,
         0.53,
         0.85,
-        5,
+        1,
     );
     weather_sensor.set_routes(args[2..].to_vec());
 

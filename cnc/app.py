@@ -3,7 +3,9 @@ from threading import Thread
 import socket
 import sys
 import random
+import time
 
+random.seed(time.time())
 app = Flask(__name__)
 network_hosts = [
     'garage_door',
@@ -20,11 +22,12 @@ def collection_loop():
     while True:
         for num_hosts in range(len(network_hosts)):
             generate_attack(num_hosts)
+            time.sleep(2)
 
 
 def generate_attack(num_hosts: int):
     rate = 20000
-    count = 20000 * 600  # ~ 10 minutes
+    count = 20000 * 30  # ~ 30 seconds
     active_bots = random.choices(network_hosts, k=num_hosts)
     workers = []
     print('Generating workers', flush=True)

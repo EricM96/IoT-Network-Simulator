@@ -76,7 +76,7 @@ fn main() -> std::io::Result<()> {
         "smart_home_controller:8080".to_string(),
         34,
         40,
-        5,
+        1,
     );
     smart_fridge.set_routes(args[2..].to_vec());
 

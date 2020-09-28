@@ -20,12 +20,12 @@ class DataAggregationModule(object):
 class DataCollecter(DataAggregationModule):
     db_username = "root"
     db_password = "password"
-    db_url = f"mongodb://{db_username}:{db_password}@db:27017/"
+    db_url = f"mongodb://{db_username}:{db_password}@db/?authSource=admin"
 
     def __init__(self, label, col_name, interval):
-        super.__init__(interval)
+        super().__init__(interval)
         print('establishing mongo connection', flush=True)
-        db_client = MongoClient(self.db_url)
+        db_client = MongoClient('db', username=self.db_username, password=self.db_password)
         print('Connection established', flush=True)
         db = db_client['traffic_windows']
         self.col = db[col_name]
@@ -56,7 +56,7 @@ class DataCollecter(DataAggregationModule):
 
 class LiveDataTransfer(DataAggregationModule):
     def __init__(self, interval):
-        super.__init__(interval)
+        super().__init__(interval)
         self.pp = pprint.PrettyPrinter(sort_dicts=False)
 
     def main_loop(self):
@@ -98,6 +98,7 @@ if __name__ == "__main__":
     elif mode == 'collect':
         label, col_name = sys.argv[3], sys.argv[4]
         agg_module = DataCollecter(label, col_name, interval)
+        agg_module.main_loop()
     else:
         print('Select a valid mode and provide necessary arguments',
               flush=True)
