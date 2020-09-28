@@ -11,7 +11,7 @@
     * device usage
         <cmd> <true | false> <hosts[]>
 [X] Add compose files for each collection stage
-[ ] Add data persistence for mongo
+[X] Add data persistence for mongo
 [ ] Test data collection
 [ ] Write data collection script
 

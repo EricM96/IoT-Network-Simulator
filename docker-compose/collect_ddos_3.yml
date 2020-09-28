@@ -175,6 +175,8 @@ services:
   db:
    image: mongo
    restart: always
+   volumes:
+     - ../mongo
    networks:
      - analysis
 
