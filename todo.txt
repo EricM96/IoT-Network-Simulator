@@ -1,5 +1,18 @@
 [X] Add compose file for live mode
-[ ] Add compose files for data collection
-[ ] Add command line arguments to alter behavior of the data aggregation module and cnc
+[X] Add compose files for data collection
+[X] Add command line arguments to alter behavior of the data aggregation module and cnc
+[X] Add command line argument to alter behavior of bot device
+[X] alter each device to use bot argument
+[X] Add command line arguments to docker-compose file commands
+    * data_aggregation usage
+        <cmd> <live | collect> <interval> [label] [col_name]
+    * cnc usage
+        <cmd> <live | collect>
+    * device usage
+        <cmd> <true | false> <hosts[]>
+[X] Add compose files for each collection stage
+[ ] Add data persistence for mongo
+[ ] Test data collection
+[ ] Write data collection script
 
 [ ] write readme

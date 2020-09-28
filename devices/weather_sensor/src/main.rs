@@ -86,6 +86,7 @@ impl WeatherSensor {
 //========================== Main Method ==========================================================
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
+    let bot_mode = args[1] == "true";
 
     // Start publisher loops with set routes
     let mut weather_sensor = WeatherSensor::new(
@@ -100,10 +101,10 @@ fn main() -> std::io::Result<()> {
         0.85,
         5,
     );
-    weather_sensor.set_routes(args[1..].to_vec());
+    weather_sensor.set_routes(args[2..].to_vec());
 
-    thread::spawn(|| {
-        let bot = Bot::new("2828".to_string());
+    thread::spawn(move || {
+        let bot = Bot::new("2828".to_string(), bot_mode);
         bot.main_loop();
     });
     weather_sensor.main_loop();

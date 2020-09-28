@@ -7,11 +7,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import io
 import pprint
+import sys
 
 
 class DataAggregationModule(object):
     router = "http://router:8080/"
-    interval = 3
+
+    def __init__(self, interval):
+        self.interval = interval
 
 
 class DataCollecter(DataAggregationModule):
@@ -19,12 +22,13 @@ class DataCollecter(DataAggregationModule):
     db_password = "password"
     db_url = f"mongodb://{db_username}:{db_password}@db:27017/"
 
-    def __init__(self, label):
+    def __init__(self, label, col_name, interval):
+        super.__init__(interval)
         print('establishing mongo connection', flush=True)
         db_client = MongoClient(self.db_url)
         print('Connection established', flush=True)
         db = db_client['traffic_windows']
-        self.col = db['test']
+        self.col = db[col_name]
         self.label = label
 
     def _write_to_db(self, traffic_window):
@@ -51,7 +55,8 @@ class DataCollecter(DataAggregationModule):
 
 
 class LiveDataTransfer(DataAggregationModule):
-    def __init__(self):
+    def __init__(self, interval):
+        super.__init__(interval)
         self.pp = pprint.PrettyPrinter(sort_dicts=False)
 
     def main_loop(self):
@@ -85,5 +90,14 @@ class LiveDataTransfer(DataAggregationModule):
 
 
 if __name__ == "__main__":
-    agg_module = LiveDataTransfer()
-    agg_module.main_loop()
+    assert len(sys.argv) >= 3
+    mode, interval = sys.argv[1], int(sys.argv[2])
+    if mode == 'live':
+        agg_module = LiveDataTransfer(interval)
+        agg_module.main_loop()
+    elif mode == 'collect':
+        label, col_name = sys.argv[3], sys.argv[4]
+        agg_module = DataCollecter(label, col_name, interval)
+    else:
+        print('Select a valid mode and provide necessary arguments',
+              flush=True)
