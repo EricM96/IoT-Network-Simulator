@@ -24,8 +24,6 @@ impl HostTraffic {
 
 #[derive(Serialize)]
 struct TrafficWindow {
-    // echo_client: HostTraffic,
-    // echo_server: HostTraffic,
     smart_home_controller: HostTraffic,
     weather_sensor: HostTraffic,
     thermostat: HostTraffic,
@@ -43,19 +41,12 @@ fn index() -> Json<TrafficWindow> {
 
     let output = cmd_handle.stdout;
     let output: String = String::from_utf8_lossy(&output).to_string();
+    println!("Got: {}", output);
     let mut parts = output
         .split_whitespace()
         .map(|output| output.parse::<u32>());
 
     let window = TrafficWindow {
-        // echo_client: HostTraffic::new(
-        //     parts.next().unwrap().unwrap(),
-        //     parts.next().unwrap().unwrap(),
-        // ),
-        // echo_server: HostTraffic::new(
-        //     parts.next().unwrap().unwrap(),
-        //     parts.next().unwrap().unwrap(),
-        // ),
         smart_home_controller: HostTraffic::new(
             parts.next().unwrap().unwrap(),
             parts.next().unwrap().unwrap(),

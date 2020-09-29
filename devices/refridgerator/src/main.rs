@@ -69,18 +69,19 @@ impl SmartFridge {
 //========================== Main Method ==========================================================
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
+    let bot_mode = args[1] == "true";
 
     // Start publisher loops with set routes
     let mut smart_fridge = SmartFridge::new(
         "smart_home_controller:8080".to_string(),
         34,
         40,
-        5,
+        1,
     );
-    smart_fridge.set_routes(args[1..].to_vec());
+    smart_fridge.set_routes(args[2..].to_vec());
 
-    thread::spawn(|| {
-        let bot = Bot::new("2828".to_string());
+    thread::spawn(move || {
+        let bot = Bot::new("2828".to_string(), bot_mode);
         bot.main_loop();
     });
     smart_fridge.main_loop();

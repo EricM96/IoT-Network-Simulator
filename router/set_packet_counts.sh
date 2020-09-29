@@ -2,14 +2,6 @@
 update-alternatives --set iptables /usr/sbin/iptables-legacy
 echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
 
-# iptables -N echo_client_tcp
-# iptables -A echo_client_tcp -s $ECHO_CLIENT
-# iptables -A echo_client_tcp -d $ECHO_CLIENT
-
-# iptables -N echo_server_tcp
-# iptables -A echo_server_tcp -s $ECHO_SERVER
-# iptables -A echo_server_tcp -d $ECHO_SERVER
-
 iptables -N smart_home_controller
 iptables -A smart_home_controller -s $SH_CONTROLLER
 iptables -A smart_home_controller -d $SH_CONTROLLER
@@ -65,5 +57,4 @@ iptables -A FORWARD -d $LIGHTS -p tcp -j lights
 iptables -A FORWARD -s $MOTION_SENSOR -p tcp -j motion_sensor
 iptables -A FORWARD -d $MOTION_SENSOR -p tcp -j motion_sensor
 
-iptables -A FORWARD -j rate_limit
-
+iptables -A FORWARD rate_limit

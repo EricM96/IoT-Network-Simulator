@@ -179,10 +179,11 @@ impl SmcGarageClient {
 //========================== Main Method ==========================================================
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
+    let bot_mode = args[1] == "true";
 
     // Start subscriber loops with set routes
     let smc = SmcServer::new("8080".to_string());
-    smc.set_routes(args[1..].to_vec());
+    smc.set_routes(args[2..].to_vec());
 
     // Start publisher loop. There's no need to set the routes here since they are set by the
     // subscriber component
@@ -196,8 +197,8 @@ fn main() -> std::io::Result<()> {
         smc_garage_pub.main_loop();
     });
 
-    thread::spawn(|| {
-        let bot = Bot::new("2828".to_string());
+    thread::spawn(move || {
+        let bot = Bot::new("2828".to_string(), bot_mode);
         bot.main_loop();
     });
 

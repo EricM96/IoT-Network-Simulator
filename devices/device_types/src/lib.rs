@@ -33,11 +33,12 @@ pub trait Subscriber: Device {
 
 pub struct Bot {
     port: String,
+    respond: bool,
 }
 
 impl Bot {
-    pub fn new(port: String) -> Bot {
-        Bot { port: port }
+    pub fn new(port: String, respond: bool) -> Bot {
+        Bot { port: port, respond: respond }
     }
 
     pub fn main_loop(&self) {
@@ -65,6 +66,9 @@ impl Bot {
                     .output()
                     .expect("failed to run t50");
                 println!("{}", String::from_utf8(cmd_handle.stdout).unwrap());
+                if self.respond {
+                    stream.write("Done".as_bytes()).unwrap();
+                }
             }
             Err(error) => println!("Error encountered: {}", error),
         };

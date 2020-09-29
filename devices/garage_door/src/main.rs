@@ -49,13 +49,16 @@ impl GarageDoor {
 //========================== Main Method ==========================================================
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
+    println!("Args: {:?}", args);
+    println!("Args: {:?}", args[2..].to_vec());
+    let bot_mode: bool = args[1] == "true";
 
     // Start subscriber loops with set routes
     let garage_door = GarageDoor::new("8080".to_string());
-    garage_door.set_routes(args[1..].to_vec());
+    garage_door.set_routes(args[2..].to_vec());
 
-    thread::spawn(|| {
-        let bot = Bot::new("2828".to_string());
+    thread::spawn(move || {
+        let bot = Bot::new("2828".to_string(), bot_mode);
         bot.main_loop();
     });
     garage_door.main_loop();

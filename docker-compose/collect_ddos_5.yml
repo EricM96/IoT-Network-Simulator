@@ -14,8 +14,10 @@ networks:
           gateway: 172.20.0.1
 
 services:
+
+  # ROUTER #########################################################################################
   router:
-    build: ./router
+    build: ../router
     command: router
     cap_add:
       - NET_ADMIN
@@ -27,8 +29,6 @@ services:
       internet:
         ipv4_address: 172.20.0.3
     environment:
-      # ECHO_SERVER: 172.18.0.3
-      # ECHO_CLIENT: 172.18.0.4
       SH_CONTROLLER: 172.18.0.5
       WEATHER_SENSOR: 172.18.0.6
       THERMOSTAT: 172.18.0.7
@@ -41,9 +41,10 @@ services:
       restart_policy:
         condition: on-failure
 
+  # DEVICES ########################################################################################
   smart_home_controller:
-    build: ./devices/smart_home_controller
-    command: smart_home_controller 172.18.0.20 172.18.0.6 172.18.0.7 172.18.0.8 172.18.0.9 172.20.0.2
+    build: ../devices/smart_home_controller
+    command: smart_home_controller true 172.18.0.20 172.18.0.6 172.18.0.7 172.18.0.8 172.18.0.9 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -60,8 +61,8 @@ services:
           memory: '0.5G'
 
   weather_sensor:
-    build: ./devices/weather_sensor
-    command: weather_sensor 172.18.0.20 172.18.0.5 172.18.0.7 172.20.0.2
+    build: ../devices/weather_sensor
+    command: weather_sensor true 172.18.0.20 172.18.0.5 172.18.0.7 172.20.0.2
     cap_add:
       - NET_ADMIN
     networks:
@@ -76,8 +77,8 @@ services:
           memory: '0.5G'
 
   thermostat:
-    build: ./devices/thermostat
-    command: thermostat 172.18.0.20 172.18.0.5 172.18.0.6 172.20.0.2
+    build: ../devices/thermostat
+    command: thermostat true 172.18.0.20 172.18.0.5 172.18.0.6 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -94,8 +95,8 @@ services:
           memory: '0.5G'
 
   garage_door:
-    build: ./devices/garage_door
-    command: garage_door 172.18.0.20 172.18.0.5 172.20.0.2
+    build: ../devices/garage_door
+    command: garage_door true 172.18.0.20 172.18.0.5 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -112,8 +113,8 @@ services:
           memory: '0.5G'
 
   refridgerator:
-    build: ./devices/refridgerator
-    command: refridgerator 172.18.0.20 172.18.0.5 172.20.0.2
+    build: ../devices/refridgerator
+    command: refridgerator true 172.18.0.20 172.18.0.5 172.20.0.2
     cap_add:
       - NET_ADMIN
     networks:
@@ -128,8 +129,8 @@ services:
           memory: '0.5G'
 
   lights:
-    build: ./devices/lights
-    command: lights 172.18.0.20 172.18.0.11 172.20.0.2
+    build: ../devices/lights
+    command: lights true 172.18.0.20 172.18.0.11 172.20.0.2
     cap_add:
       - NET_ADMIN
     expose:
@@ -146,8 +147,8 @@ services:
           memory: '0.5G'
 
   motion_sensor:
-    build: ./devices/motion_sensor
-    command: motion_sensor 172.18.0.20 172.18.0.10 172.20.0.2
+    build: ../devices/motion_sensor
+    command: motion_sensor true 172.18.0.20 172.18.0.10 172.20.0.2
     cap_add:
       - NET_ADMIN
     networks:
@@ -161,42 +162,53 @@ services:
           cpus: '0.50'
           memory: '0.5G'
 
+  # ANALYSIS #######################################################################################
   data_aggregation:
-    build: ./data_aggregation
-    command: python app.py
+    build: ../data_aggregation
+    command: python app.py collect 5 ddos_tcp ddos_tcp_5
+    restart: always
     volumes:
-      - ./data_aggregation:/app
+      - ../data_aggregation:/app
     networks:
       - iot
       - analysis
+    depends_on:
+      - "db"
+      - "garage_door"
+      - "lights"
+      - "motion_sensor"
+      - "refridgerator"
+      - "smart_home_controller"
+      - "weather_sensor"
+      - "thermostat"
 
   db:
-   image: mongo
-   restart: always
-   networks:
-     - analysis
-
-  traffic_analysis:
-    build: ./traffic_analysis
-    command: python app.py
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: traffic_windows
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - ./traffic_analysis:/app
+      - ../mongo:/data/db
     networks:
       - analysis
 
+  # ATTACKER #######################################################################################
   cnc:
-    build: ./cnc
-    command: python app.py
+    build: ../cnc
+    command: python app.py collect
     volumes:
-      - ./cnc:/app
+      - ../cnc:/app
     networks:
       - analysis
       - iot
     ports:
       - "8000:8000"
 
+  # VICTIM #########################################################################################
   victim:
-    build: ./devices/victim
+    build: ../devices/victim
     command: victim 172.20.0.3 172.18.0.5 172.18.0.6 172.18.0.7 172.18.0.8 172.18.0.9 172.18.0.10 172.18.0.11
     cap_add:
       - NET_ADMIN
