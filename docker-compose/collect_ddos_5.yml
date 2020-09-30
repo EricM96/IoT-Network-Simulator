@@ -165,7 +165,7 @@ services:
   # ANALYSIS #######################################################################################
   data_aggregation:
     build: ../data_aggregation
-    command: python app.py collect 5 ddos_tcp ddos_tcp_5
+    command: python app.py collect 5 ddos_tcp ddos_tcp_5_redux
     restart: always
     volumes:
       - ../data_aggregation:/app

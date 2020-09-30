@@ -164,7 +164,7 @@ services:
   # ANALYSIS #######################################################################################
   data_aggregation:
     build: ../data_aggregation
-    command: python app.py live
+    command: python app.py live 3
     volumes:
       - ../data_aggregation:/app
     networks:

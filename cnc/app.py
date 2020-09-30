@@ -20,7 +20,7 @@ network_hosts = [
 
 def collection_loop():
     while True:
-        for num_hosts in range(5, len(network_hosts) + 1):
+        for num_hosts in range(1, len(network_hosts) + 1):
             generate_attack(num_hosts)
             time.sleep(2)
 
@@ -28,7 +28,7 @@ def collection_loop():
 def generate_attack(num_hosts: int):
     rate = 20000
     count = 20000 * 30  # ~ 30 seconds
-    active_bots = random.choices(network_hosts, k=num_hosts)
+    active_bots = random.sample(network_hosts, k=num_hosts)
     workers = []
     print('Generating workers', flush=True)
     for bot in active_bots:
