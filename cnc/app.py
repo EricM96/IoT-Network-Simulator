@@ -20,7 +20,7 @@ network_hosts = [
 
 def collection_loop():
     while True:
-        for num_hosts in range(len(network_hosts)):
+        for num_hosts in range(5, len(network_hosts) + 1):
             generate_attack(num_hosts)
             time.sleep(2)
 
