@@ -43,7 +43,7 @@ def find_distribution(windows):
     devices = [key for key in windows[0].keys() if key not in ignore_keys]
     dist_dict = {}
 
-    ddos_threshold = 10_000
+    ddos_threshold = 1_000
     for window in windows:
         num_attackers = 0
         for dev in devices:
