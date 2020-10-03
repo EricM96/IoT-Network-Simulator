@@ -22,20 +22,20 @@ def load_model(model_name, num_classes):
     if model_name == 'm_net':
         model = torch.hub.load('pytorch/vision:v0.5.0',
                                'mobilenet_v2', pretrained=False)
-        model.classifier[1] = nn.Conv2d(
-            512, num_classes, kernel_size=(1, 1), stride=(1, 1))
+        model.classifier[1] = nn.Linear(1280, num_classes)
     else:
         model = torch.hub.load('pytorch/vision:v0.5.0',
                                'squeezenet1_1', pretrained=False)
-        model.classifier[1] = nn.Linear(1280, num_classes)
+        model.classifier[1] = nn.Conv2d(
+            512, num_classes, kernel_size=(1, 1), stride=(1, 1))
 
     return model
 
 
 def train_model(config, checkpoint_dir=None, model_name=None, device=None,
-                max_epochs=None, num_workers=None, train_set=None,
-                valid_set=None):
-    model = (model_name, len(train_set.classes))
+                max_epochs=None, num_workers=None, data_pth=None):
+    train_set, valid_set, test_set = get_datasets(data_pth)
+    model = load_model(model_name, len(train_set.classes))
     model.to(device)
 
     num_epochs = max_epochs
@@ -222,8 +222,8 @@ def config_cuda(use_cuda):
 def main(args):
     device = config_cuda(args.use_cuda)
 
-    data_pth = Path(args.data_path)
-    out_pth = Path(args.out_path)
+    data_pth = Path(Path.cwd() / args.data_path)
+    out_pth = Path(Path.cwd() / args.out_path)
 
     train_set, valid_set, test_set = get_datasets(data_pth)
 
@@ -243,30 +243,31 @@ def main(args):
         metric_columns=['loss', 'accuracy', 'training_iteration']
     )
     num_gpus = 1 if device == 'cuda' else 0
-    result = tune.run(
-        partial(train_model, model_name=args.model, device=device,
-                max_epochs=args.max_epochs, num_workers=args.num_workers,
-                train_set=train_set, valid_set=valid_set),
-        resources_per_trial={'cpu': args.num_workers, 'gpu': num_gpus},
-        config=config,
-        num_samples=args.num_samples,
-        scheduler=scheduler,
-        progress_reporter=reporter
-    )
-    best_trial = result.get_best_trial('loss', 'min', 'last')
-    print(f'Best trial config {best_trial.config}')
-    print(
-          f'Best trial final validation loss: {best_trial.last_result["loss"]}'
-         )
-    model = load_model(args.model, len(train_set.classes))
+    # result = tune.run(
+    #     partial(train_model, model_name=args.model, device=device,
+    #             max_epochs=args.max_epochs, num_workers=args.num_workers,
+    #             data_pth=data_pth),
+    #     resources_per_trial={'cpu': args.num_workers, 'gpu': num_gpus},
+    #     config=config,
+    #     num_samples=args.num_samples,
+    #     scheduler=scheduler,
+    #     progress_reporter=reporter
+    # )
+    train_model(config={'eta': 0.00001, 'batch_size': 4}, model_name=args.model, device=device, max_epochs=args.max_epochs, num_workers=args.num_workers, data_pth=data_pth)
+    # best_trial = result.get_best_trial('loss', 'min', 'last')
+    # print(f'Best trial config {best_trial.config}')
+    # print(
+    #       f'Best trial final validation loss: {best_trial.last_result["loss"]}'
+    #      )
+    # model = load_model(args.model, len(train_set.classes))
 
-    best_checkpoint_dir = best_trial.checkpoint.value
-    model_state, optimizer_state = torch.load(os.path.join(
-        best_checkpoint_dir, 'checkpoint'))
-    model.load_state_dict(model_state)
+    # best_checkpoint_dir = best_trial.checkpoint.value
+    # model_state, optimizer_state = torch.load(os.path.join(
+    #     best_checkpoint_dir, 'checkpoint'))
+    # model.load_state_dict(model_state)
 
-    test_acc = test_model(model, device, test_set, out_pth, args.num_workers)
-    print(f'Best trial test set accuracy: {test_acc}')
+    # test_acc = test_model(model, device, test_set, out_pth, args.num_workers)
+    # print(f'Best trial test set accuracy: {test_acc}')
 
 
 if __name__ == '__main__':
