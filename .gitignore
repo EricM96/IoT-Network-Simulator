@@ -11,3 +11,6 @@ Cargo.lock
 
 # Ignore database files
 mongo/*
+
+# Ignore generated datasets
+tools/datasets/
