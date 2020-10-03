@@ -46,20 +46,20 @@ def write_heatmap(window, target, vmin, vmax):
 write_heatmap.counter = 0
 
 
-def gen_heatmaps(val, out_dir, vmin, vmax):
+def gen_heatmaps(val, out_dir, label, vmin, vmax):
     train_sp, val_sp = .3, .2
     train_idx = int(val['len'] * train_sp)
     val_idx = int(val['len'] * (train_sp + val_sp))
-    train_dir = out_dir / 'train'
-    Path.mkdir(train_dir, exist_ok=True)
+    train_dir = out_dir / 'train' / label
+    Path.mkdir(train_dir, exist_ok=True, parents=True)
     for window in val['windows'][: train_idx]:
         write_heatmap(window, train_dir, vmin, vmax)
-    val_dir = out_dir / 'valid'
-    Path.mkdir(val_dir, exist_ok=True)
+    val_dir = out_dir / 'valid' / label
+    Path.mkdir(val_dir, exist_ok=True, parents=True)
     for window in val['windows'][train_idx: val_idx]:
         write_heatmap(window, val_dir, vmin, vmax)
-    test_dir = out_dir / 'test'
-    Path.mkdir(test_dir, exist_ok=True)
+    test_dir = out_dir / 'test' / label
+    Path.mkdir(test_dir, exist_ok=True, parents=True)
     for window in val['windows'][val_idx:]:
         write_heatmap(window, test_dir, vmin, vmax)
 
@@ -75,12 +75,12 @@ def main(fin, write_dir, label, vmin, vmax):
         print(f'Unable to find file {fin}')
 
     dist_dict = find_distribution(traffic_windows)
-    out_dir = Path(write_dir) / label
+    out_dir = Path(write_dir)
     Path.mkdir(out_dir, exist_ok=True, parents=True)
     for val in dist_dict.values():
         if val['len'] == 0:
             continue
-        gen_heatmaps(val, out_dir, vmin, vmax)
+        gen_heatmaps(val, out_dir, label, vmin, vmax)
 
 
 if __name__ == '__main__':
