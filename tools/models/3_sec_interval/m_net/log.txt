@@ -1,0 +1,14 @@
+True Positives: 7018
+True Negatives: 5788
+False Positives: 0
+False Negatives: 0
+Accuracy: 1.0
+True Positive Rate: 1.0
+True Negative Rate: 1.0
+False Positive Rate: 0.0
+False Negative Rate: 0.0
+Detection Rate: 1.0
+False Alarm Rate: 0.0
+Precision: 1.0
+Recall: 1.0
+F1 Score: 1.2125086385625432
