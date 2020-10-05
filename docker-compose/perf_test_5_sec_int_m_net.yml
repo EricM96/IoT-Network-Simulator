@@ -1,0 +1,22 @@
+version: "3"
+
+networks:
+  analysis:
+
+services:
+  data_aggregation:
+    build: ../data_aggregation
+    command: python app.py perf_test 5 m_net
+    restart: always
+    volumes:
+      - ../data_aggregation:/app
+    networks:
+      - analysis
+
+  traffic_analysis:
+    build: ../traffic_analysis 5 m_net
+    command: python app.py m_net
+    volumes:
+      - ../traffic_analysis:/app
+    networks:
+      - analysis

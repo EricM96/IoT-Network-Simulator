@@ -8,6 +8,8 @@ import seaborn as sns
 import io
 import pprint
 import sys
+from pathlib import Path
+import json
 
 
 class DataAggregationModule(object):
@@ -89,6 +91,51 @@ class LiveDataTransfer(DataAggregationModule):
                 print(r.status_code)
 
 
+class TestModule(DataAggregationModule):
+    def __init__(self, interval, model_name):
+        super().__init__(interval)
+        self.model_name = model_name
+
+    def main_loop(self):
+        data_dir = Path.cwd() / 'testing' / 'data' / 'json'
+        if self.interval == 3:
+            data_files = [data_dir / '10-1' / 'ddos_tcp_3_redux.json',
+                          data_dir / '9-30' / 'norm_tcp_3.json']
+        else:
+            data_files = [data_dir / '10-1' / 'ddos_tcp_5_redux.json',
+                          data_dir / '9-30' / 'norm_tcp_5.json']
+        log_file = Path.cwd() / 'testing' / 'results' / self.model_name + '_' \
+            + str(self.interval) + '_' + 'log.txt'
+
+        ignore_keys = ['_id', 'delay', 'label']
+
+        for file in data_files:
+            with open(file) as fin:
+                for line in fin:
+                    traffic_window = json.loads(line)
+                    # remove non host traffic fields
+                    for key in ignore_keys:
+                        del traffic_window[key]
+
+                    start = time()
+                    traffic_window = pd.DataFrame.from_dict(
+                        traffic_window, orient='index')
+                    _ = sns.heatmap(traffic_window, xticklabels=True,
+                                    yticklabels=True, cbar=False, vmin=0,
+                                    vmax=100)
+                    buffer = io.BytesIO()
+                    plt.savefig(buffer, format='png')
+                    data_files = {'img': buffer.getvalue()}
+                    response = post('http://traffic_analysis:8080/api',
+                                    files=data_files)
+                    prediction = response.text
+                    end = time()
+                    delay = end - start
+                    with open(log_file, 'a+') as fout:
+                        fout.write(str(delay) + ', ')
+                    print(prediction, flush=True)
+
+
 if __name__ == "__main__":
     assert len(sys.argv) >= 3
     mode, interval = sys.argv[1], int(sys.argv[2])
@@ -98,6 +145,10 @@ if __name__ == "__main__":
     elif mode == 'collect':
         label, col_name = sys.argv[3], sys.argv[4]
         agg_module = DataCollecter(label, col_name, interval)
+        agg_module.main_loop()
+    elif mode == 'perf_test':
+        model_name = sys.argv[3]
+        agg_module = TestModule(interval)
         agg_module.main_loop()
     else:
         print('Select a valid mode and provide necessary arguments',
