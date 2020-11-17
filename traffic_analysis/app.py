@@ -9,8 +9,6 @@ from pathlib import Path
 
 app = Flask(__name__)
 model = None
-model.classifier[1] = torch.nn.Conv2d(
-    512, 2, kernel_size=(1, 1), stride=(1, 1))
 preprocess = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -20,7 +18,6 @@ preprocess = transforms.Compose([
             std=[0.229, 0.224, 0.225]
         ),
     ])
-model.eval()
 
 
 def transform_img(img_bytes):
@@ -67,7 +64,9 @@ if __name__ == '__main__':
     model_pth = model_pth / '3_sec_interval' \
         if args.interval == 3 else '5_sec_interval'
     model_pth = model_pth / args.model_name / 'model.pt'
-    model_state = torch.load(model_pth)
+    device = torch.device('cpu')
+    model_state = torch.load(model_pth, map_location=device)
     model.load_state_dict(model_state)
+    model.eval()
     app.debug = True
     app.run(host='0.0.0.0', port=8080)

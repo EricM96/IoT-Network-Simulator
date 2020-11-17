@@ -104,8 +104,9 @@ class TestModule(DataAggregationModule):
         else:
             data_files = [data_dir / '10-1' / 'ddos_tcp_5_redux.json',
                           data_dir / '9-30' / 'norm_tcp_5.json']
-        log_file = Path.cwd() / 'testing' / 'results' / self.model_name + '_' \
-            + str(self.interval) + '_' + 'log.txt'
+        log_file = Path.cwd() / 'testing' / 'results' / (self.model_name + '_'
+                                                         + str(self.interval) +
+                                                         '_' + 'log.txt')
 
         ignore_keys = ['_id', 'delay', 'label']
 
@@ -117,13 +118,17 @@ class TestModule(DataAggregationModule):
                     for key in ignore_keys:
                         del traffic_window[key]
 
+                    f = plt.figure()
                     start = time()
                     traffic_window = pd.DataFrame.from_dict(
                         traffic_window, orient='index')
-                    _ = sns.heatmap(traffic_window, xticklabels=True,
-                                    yticklabels=True, cbar=False, vmin=0,
-                                    vmax=100)
+                    plt.tight_layout()
+                    _ = sns.heatmap(traffic_window, xticklabels=False,
+                                    yticklabels=False, cbar=False, vmin=0,
+                                    vmax=60)
                     buffer = io.BytesIO()
+                    plt.ylabel('')
+                    plt.xlabel('')
                     plt.savefig(buffer, format='png')
                     data_files = {'img': buffer.getvalue()}
                     response = post('http://traffic_analysis:8080/api',
@@ -133,6 +138,8 @@ class TestModule(DataAggregationModule):
                     delay = end - start
                     with open(log_file, 'a+') as fout:
                         fout.write(str(delay) + ', ')
+                    f.clear()
+                    plt.close(f)
                     print(prediction, flush=True)
 
 
@@ -148,7 +155,7 @@ if __name__ == "__main__":
         agg_module.main_loop()
     elif mode == 'perf_test':
         model_name = sys.argv[3]
-        agg_module = TestModule(interval)
+        agg_module = TestModule(interval, model_name)
         agg_module.main_loop()
     else:
         print('Select a valid mode and provide necessary arguments',

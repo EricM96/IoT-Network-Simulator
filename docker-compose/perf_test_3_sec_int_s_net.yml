@@ -7,11 +7,12 @@ services:
   data_aggregation:
     build: ../data_aggregation
     command: python app.py perf_test 3 s_net
-    restart: always
     volumes:
       - ../data_aggregation:/app
     networks:
       - analysis
+    depends_on:
+      - "traffic_analysis"
 
   traffic_analysis:
     build: ../traffic_analysis
